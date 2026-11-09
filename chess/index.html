@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Премиум Шахматы PRO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: radial-gradient(circle, #1e272e 0%, #0f141c 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        #turn-indicator {
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #mode-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.2s;
+        }
+
+        #mode-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 45px);
+            grid-template-rows: repeat(8, 45px);
+            border: 5px solid #2c3e50;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        @media(min-width: 500px) {
+            #board {
+                grid-template-columns: repeat(8, 60px);
+                grid-template-rows: repeat(8, 60px);
+            }
+
+            .square {
+                font-size: 44px !important;
+            }
+        }
+
+        .square {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.15s ease;
+        }
+
+        .light {
+            background-color: #eaeaea;
+        }
+
+        .dark {
+            background-color: #4b6584;
+        }
+
+        .square.selected {
+            background-color: #f1c40f !important;
+        }
+
+        .square.in-check {
+            background-color: #e74c3c !important;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            background-color: rgba(46, 204, 113, 0.7);
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.9);
+        }
+
+        /* Элитный контрастный стиль для фигур */
+        .w {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 2px #000000;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+        }
+
+        .b {
+            color: #111116;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6), 0 0 1px #ffffff;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Chess Premium Pro</h1>
+    <div class="controls">
+        <div id="turn-indicator">Ход: Белые</div>
+        <button id="mode-btn" onclick="toggleMode()">Режим: с Другом</button>
+    </div>
+    <div id="board"></div>
+
+    <script>
+        const P = {
+            NONE: 0,
+            PAWN: 1,
+            KNIGHT: 2,
+            BISHOP: 3,
+            ROOK: 4,
+            QUEEN: 5,
+            KING: 6,
+            W: 8,
+            B: 16
+        };
+        let board = Array(64).fill(0),
+            turn = P.W,
+            selectedSquare = null,
+            possibleMoves = [],
+            enPassant = null;
+        let castling = {
+                wK: true,
+                wQ: true,
+                bK: true,
+                bQ: true
+            },
+            halfmove = 0,
+            history = [],
+            vsAI = false;
+        const symbols = {
+            [P.PAWN]: '♟',
+            [P.ROOK]: '♜',
+            [P.KNIGHT]: '♞',
+            [P.BISHOP]: '♝',
+            [P.QUEEN]: '♛',
+            [P.KING]: '♚'
+        };
+
+        function initBoard() {
+            board.fill(0);
+            const row = [P.ROOK, P.KNIGHT, P.BISHOP, P.QUEEN, P.KING, P.BISHOP, P.KNIGHT, P.ROOK];
+            for (let i = 0; i < 8; i++) {
+                board[i] = row[i] | P.B;
+                board[8 + i] = P.PAWN | P.B;
+                board[48 + i] = P.PAWN | P.W;
+                board[56 + i] = row[i] | P.W;
+            }
+            turn = P.W;
+            selectedSquare = null;
+            possibleMoves = [];
+            enPassant = null;
+            castling = {
+                wK: true,
+                wQ: true,
+                bK: true,
+                bQ: true
+            };
+            halfmove = 0;
+            history = [board.join(',')];
+        }
+
+        function toggleMode() {
+            vsAI = !vsAI;
+            document.getElementById('mode-btn').textContent = vsAI ? "Режим: с Ботом" : "Режим: с Другом";
+            resetGame();
+        }
+
+        function resetGame() {
+            initBoard();
+            drawBoard();
+        }
+
+        function generateMoves(from, fBoard = board, fCastling = castling, fEP = enPassant) {
+            let moves = [],
+                pc = fBoard[from];
+            if (!pc) return moves;
+            let type = pc & 7,
+                col = pc & 24,
+                enemy = col === P.W ? P.B : P.W,
+                r = Math.floor(from / 8),
+                c = from % 8;
+            if (type === P.PAWN) {
+                let dir = col === P.W ? -1 : 1,
+                    start = col === P.W ? 6 : 1,
+                    nxt = from + dir * 8;
+                if (nxt >= 0 && nxt < 64 && !fBoard[nxt]) {
+                    moves.push(nxt);
+                    if (r === start && !fBoard[from + dir * 16]) moves.push(from + dir * 16);
+                }
+                for (let side of [-1, 1]) {
+                    let att = from + dir * 8 + side;
+                    if (att >= 0 && att < 64 && Math.abs((att % 8) - c) === 1) {
+                        if ((fBoard[att] && (fBoard[att] & 24) === enemy) || att === fEP) moves.push(att);
+                    }
+                }
+            } else if (type === P.KNIGHT) {
+                for (let o of [-17, -15, -10, -6, 6, 10, 15, 17]) {
+                    let tc = from + o;
+                    if (tc >= 0 && tc < 64 && Math.max(Math.abs((tc % 8) - c), Math.abs(Math.floor(tc / 8) - r)) <= 2 && (!fBoard[tc] || !(fBoard[tc] & col))) moves.push(tc);
+                }
+            } else if (type === P.KING) {
+                for (let o of [-9, -8, -7, -1, 1, 7, 8, 9]) {
+                    let tc = from + o;
+                    if (tc >= 0 && tc < 64 && Math.max(Math.abs((tc % 8) - c), Math.abs(Math.floor(tc / 8) - r)) === 1 && (!fBoard[tc] || !(fBoard[tc] & col))) moves.push(tc);
+                }
+                if (fBoard === board) {
+                    if (col === P.W && from === 60) {
+                        if (fCastling.wK && !board[61] && !board[62] && !isAttacked(60, P.B) && !isAttacked(61, P.B) && !isAttacked(62, P.B)) moves.push(62);
+                        if (fCastling.wQ && !board[59] && !board[58] && !board[57] && !isAttacked(60, P.B) && !isAttacked(59, P.B) && !isAttacked(58, P.B)) moves.push(58);
+                    } else if (col === P.B && from === 4) {
+                        if (fCastling.bK && !board[5] && !board[6] && !isAttacked(4, P.W) && !isAttacked(5, P.W) && !isAttacked(6, P.W)) moves.push(6);
+                        if (fCastling.bQ && !board[3] && !board[2] && !board[1] && !isAttacked(4, P.W) && !isAttacked(3, P.W) && !isAttacked(2, P.W)) moves.push(2);
+                    }
+                }
+            } else {
+                let dirs = [];
+                if (type === P.BISHOP || type === P.QUEEN) dirs.push([-1, -1], [-1, 1], [1, -1], [1, 1]);
+                if (type === P.ROOK || type === P.QUEEN) dirs.push([-1, 0], [1, 0], [0, -1], [0, 1]);
+                for (let d of dirs) {
+                    let cr = r,
+                        cc = c;
+                    while (true) {
+                        cr += d[0];
+                        cc += d[1];
+                        if (cr < 0 || cr >= 8 || cc < 0 || cc >= 8) break;
+                        let tc = cr * 8 + cc;
+                        if (!fBoard[tc]) moves.push(tc);
+                        else {
+                            if ((fBoard[tc] & 24) === enemy) moves.push(tc);
+                            break;
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+
+        function isAttacked(sq, byCol, fBoard = board) {
+            for (let i = 0; i < 64; i++) {
+                if ((fBoard[i] & 24) === byCol && generateMoves(i, fBoard, castling, null).includes(sq)) return true;
+            }
+            return false;
+        }
+
+        function getKing(col, fBoard = board) {
+            for (let i = 0; i < 64; i++) {
+                if ((fBoard[i] & 7) === P.KING && (fBoard[i] & 24) === col) return i;
+            }
+            return -1;
+        }
+
+        function makeMove(from, to) {
+            let pc = board[from],
+                type = pc & 7,
+                col = pc & 24,
+                isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
+            if (type === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
+            if (type === P.KING) {
+                if (from === 60 && to === 62) {
+                    board[61] = board[63];
+                    board[63] = 0;
+                }
+                if (from === 60 && to === 58) {
+                    board[59] = board[56];
+                    board[56] = 0;
+                }
+                if (from === 4 && to === 6) {
+                    board[5] = board[7];
+                    board[7] = 0;
+                }
+                if (from === 4 && to === 2) {
+                    board[3] = board[0];
+                    board[0] = 0;
+                }
+                if (col === P.W) castling.wK = castling.wQ = false;
+                else castling.bK = castling.bQ = false;
+            }
+            if (type === P.ROOK) {
+                if (from === 56) castling.wQ = false;
+                if (from === 63) castling.wK = false;
+                if (from === 0) castling.bQ = false;
+                if (from === 7) castling.bK = false;
+            }
+            if (to === 56) castling.wQ = false;
+            if (to === 63) castling.wK = false;
+            if (to === 0) castling.bQ = false;
+            if (to === 7) castling.bK = false;
+            board[to] = pc;
+            board[from] = 0;
+            enPassant = (type === P.PAWN && Math.abs(to - from) === 16) ? to + (col === P.W ? 8 : -8) : null;
+            if (type === P.PAWN && (Math.floor(to / 8) === 0 || Math.floor(to / 8) === 7)) board[to] = P.QUEEN | col;
+            halfmove = (type === P.PAWN || isCap) ? 0 : halfmove + 1;
+            turn = turn === P.W ? P.B : P.W;
+            history.push(board.join(','));
+        }
+
+        function getLegalMoves(from) {
+            let raw = generateMoves(from),
+                legal = [],
+                col = board[from] & 24;
+            for (let to of raw) {
+                let saved = [...board],
+                    savedC = {
+                        ...castling
+                    },
+                    savedEP = enPassant;
+                if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
+                board[to] = board[from];
+                board[from] = 0;
+                let kingSq = getKing(col);
+                if (kingSq !== -1 && !isAttacked(kingSq, col === P.W ? P.B : P.W)) legal.push(to);
+                board = saved;
+                castling = savedC;
+                enPassant = savedEP;
+            }
+            return legal;
+        }
+
+        function hasMoves(col) {
+            for (let i = 0; i < 64; i++) {
+                if ((board[i] & 24) === col && getLegalMoves(i).length > 0) return true;
+            }
+            return false;
+        }
+
+        function isDraw() {
+            if (halfmove >= 100) return "Ничья: 50 ходов!";
+            if (history.filter(x => x === board.join(',')).length >= 3) return "Ничья: повторение!";
+            return null;
+        }
+
+        /* Искусственный Интеллект бота (Оценка позиции материалом) */
+        function makeAIMove() {
+            let piecesValues = {
+                [P.PAWN]: 10,
+                [P.KNIGHT]: 30,
+                [P.BISHOP]: 30,
+                [P.ROOK]: 50,
+                [P.QUEEN]: 90,
+                [P.KING]: 900
+            };
+            let allMoves = [];
+            for (let i = 0; i < 64; i++) {
+                if (board[i] && (board[i] & P.B)) {
+                    let moves = getLegalMoves(i);
+                    for (let m of moves) allMoves.push({
+                        from: i,
+                        to: m
+                    });
+                }
+            }
+            if (allMoves.length === 0) return;
+            allMoves.forEach(mv => {
+                let score = 0;
+                let targetPiece = board[mv.to];
+                if (targetPiece) score += piecesValues[targetPiece & 7] * 2;
+                let currentPieceType = board[mv.from] & 7;
+                if (currentPieceType === P.PAWN) score += (Math.floor(mv.to / 8));
+                mv.score = score + (Math.random() * 3);
+            });
+            allMoves.sort((a, b) => b.score - a.score);
+            let bestMove = allMoves[0];
+            makeMove(bestMove.from, bestMove.to);
+            drawBoard();
+        }
+
+        function drawBoard() {
+            const el = document.getElementById('board');
+            el.innerHTML = '';
+            let kingCheck = isAttacked(getKing(turn), turn === P.W ? P.B : P.W);
+            for (let i = 0; i < 64; i++) {
+                const sq = document.createElement('div');
+                let r = Math.floor(i / 8),
+                    c = i % 8;
+                sq.classList.add('square', (r + c) % 2 === 0 ? 'light' : 'dark');
+                if (board[i]) {
+                    sq.textContent = symbols[board[i] & 7];
+                    sq.classList.add((board[i] & P.W) ? 'w' : 'b');
+                }
+                if (selectedSquare === i) sq.classList.add('selected');
+                if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
+                if (possibleMoves.includes(i)) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    sq.appendChild(dot);
+                }
+                sq.addEventListener('click', () => {
+                    if (vsAI && turn === P.B) return;
+                    if (!hasMoves(P.W) && !hasMoves(P.B)) return;
+                    if (selectedSquare === null) {
+                        if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        }
+                    } else {
+                        if (possibleMoves.includes(i)) {
+                            makeMove(selectedSquare, i);
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            drawBoard();
+                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 400);
+                        } else if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        } else {
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            drawBoard();
+                        }
+                    }
+                });
+                el.appendChild(sq);
+            }
+            const ind = document.getElementById('turn-indicator');
+            let hm = hasMoves(turn),
+                dr = isDraw();
+            if (!hm) {
+                ind.textContent = kingCheck ? `Мат! Перезапуск через 5с...` : 'Ничья: Пат! Перезапуск...';
+                ind.style.backgroundColor = kingCheck ? '#27ae60' : '#7f8c8d';
+                setTimeout(resetGame, 5000);
+            } else if (dr) {
+                ind.textContent = dr + " Перезапуск...";
+                ind.style.backgroundColor = '#7f8c8d';
+                setTimeout(resetGame, 5000);
+            } else {
+                ind.textContent = `Ход: ${turn===P.W?'Белые':'Черные'}${kingCheck?' (ШАХ!)':''}`;
+                ind.style.backgroundColor = '#34495e';
+            }
+        }
+
+        initBoard();
+        drawBoard();
+    </script>
+</body>
+
+</html>
