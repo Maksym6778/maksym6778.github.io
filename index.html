@@ -3,27 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeHub - Free Online Browser Games</title>
+    <title>Chess.com Edition - ArcadeHub</title>
     <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-dark: #0a0d14;
-            --card-bg: rgba(18, 24, 38, 0.85);
-            --card-hover: rgba(30, 41, 65, 0.95);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-primary: #8b5cf6;
-            --accent-secondary: #06b6d4;
-            --accent-glow: rgba(139, 92, 246, 0.4);
-            --gradient-hero: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #06b6d4 100%);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(139, 92, 246, 0.5);
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
+            --bg-dark: #262421;
+            --square-light: #ebecd0;
+            --square-dark: #739552;
+            --square-select: #f7ec59;
+            --square-check: #ef4444;
+            --square-move-dot: rgba(20, 85, 30, 0.4);
         }
 
         * {
@@ -35,607 +27,648 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-dark);
-            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            position: relative;
-            background: url('bmw.png') no-repeat center center/cover;
-            background-attachment: fixed;
+            color: #ffffff;
+            padding: 15px;
             overflow-x: hidden;
         }
 
-        /* Dark overlay for readability */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 13, 20, 0.82);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 1;
-        }
-
-        .app-wrapper {
-            position: relative;
-            z-index: 2;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem 3rem 2rem;
-        }
-
-        /* --- Header & Navigation --- */
-        header {
+        .header-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--text-main);
-        }
-
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--gradient-hero);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .logo-text {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .search-bar {
-            position: relative;
-            flex: 1;
-            max-width: 480px;
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .search-bar input {
             width: 100%;
-            padding: 12px 16px 12px 48px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.25s ease;
+            max-width: 512px;
+            margin-bottom: 12px;
         }
 
-        .search-bar input:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 15px var(--accent-glow);
-            background: rgba(15, 23, 42, 0.95);
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #bababa;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.2s ease;
         }
 
-        /* --- Category Pills --- */
-        .categories-nav {
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .controls {
             display: flex;
             gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 12px;
-            margin-bottom: 2rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-primary) transparent;
+            margin-bottom: 12px;
+            align-items: center;
+            width: 100%;
+            max-width: 512px;
+            justify-content: center;
         }
 
-        .categories-nav::-webkit-scrollbar {
-            height: 4px;
-        }
-        .categories-nav::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 4px;
-        }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 8px 18px;
-            border-radius: 20px;
+        #turn-indicator {
             font-size: 0.9rem;
-            font-weight: 600;
+            background: #312e2b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            border: 1px solid #403d39;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e5e7eb;
+        }
+
+        #mode-btn {
+            padding: 8px 16px;
+            background: #81b64c;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
             cursor: pointer;
-            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(129, 182, 76, 0.3);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .cat-btn:hover, .cat-btn.active {
-            background: var(--accent-primary);
-            color: #fff;
-            border-color: var(--accent-primary);
-            box-shadow: 0 4px 14px var(--accent-glow);
-        }
-
-        /* --- Featured Hero Showcase --- */
-        .hero-banner {
-            position: relative;
-            background: linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%), url('bmw.png') center/cover;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            padding: 2.5rem;
-            margin-bottom: 3rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-banner::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, rgba(10, 13, 20, 0.9) 0%, rgba(10, 13, 20, 0.3) 100%);
-            z-index: 1;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 550px;
-        }
-
-        .hero-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(139, 92, 246, 0.25);
-            color: #c4b5fd;
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-bottom: 1rem;
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            line-height: 1.15;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .hero-desc {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-play-hero {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--gradient-hero);
-            color: #fff;
-            padding: 14px 28px;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 1.05rem;
-            text-decoration: none;
-            box-shadow: 0 8px 25px var(--accent-glow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-play-hero:hover {
+        #mode-btn:hover {
+            background: #a3d16b;
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.6);
         }
 
-        .hero-preview {
-            position: relative;
-            z-index: 2;
-            width: 220px;
-            height: 220px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        /* Player Bar Component */
+        .player-bar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 6rem;
-            color: #a78bfa;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        /* --- Section Header --- */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title i {
-            color: var(--accent-primary);
-        }
-
-        /* --- Games Grid --- */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            text-decoration: none;
-            color: var(--text-main);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .card:hover {
-            transform: translateY(-6px) scale(1.02);
-            border-color: var(--border-hover);
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.25);
-            background-color: var(--card-hover);
-        }
-
-        .card-thumbnail {
+            gap: 12px;
             width: 100%;
-            height: 150px;
-            background: rgba(30, 41, 59, 0.7);
+            max-width: 512px;
+            padding: 8px 12px;
+            background: #312e2b;
+            border-radius: 6px;
+            margin: 4px 0;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            background: #45423e;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
+            font-size: 1.1rem;
+            color: #bababa;
+        }
+
+        .player-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+
+        /* Chess Board Container */
+        #board-wrapper {
             position: relative;
+            width: 416px;
+            height: 416px;
+            border-radius: 6px;
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
-        .card-thumbnail::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, var(--card-bg) 0%, transparent 80%);
+        @media (min-width: 540px) {
+            #board-wrapper {
+                width: 512px;
+                height: 512px;
+            }
         }
 
-        .card-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 12px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid var(--border-color);
-            color: #38bdf8;
-            backdrop-filter: blur(6px);
-            z-index: 2;
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 52px);
+            grid-template-rows: repeat(8, 52px);
+            width: 100%;
+            height: 100%;
         }
 
-        .card-body {
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            z-index: 2;
+        @media (min-width: 540px) {
+            #board {
+                grid-template-columns: repeat(8, 64px);
+                grid-template-rows: repeat(8, 64px);
+            }
         }
 
-        .card-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .card-desc {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            flex-grow: 1;
-        }
-
-        .card-footer {
+        .square {
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 0.75rem;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
         }
 
-        .card-rating {
-            color: #fbbf24;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 600;
+        .square-light { background-color: var(--square-light); }
+        .square-dark { background-color: var(--square-dark); }
+
+        .square.selected { background-color: var(--square-select) !important; }
+
+        .square.in-check {
+            background-color: var(--square-check) !important;
+            animation: pulse-red 1s infinite alternate;
         }
 
-        /* Coming Soon style for missing games */
-        .card.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .card.disabled:hover {
-            transform: none;
-            box-shadow: none;
-            border-color: var(--border-color);
+        @keyframes pulse-red {
+            from { background-color: #ef4444; }
+            to { background-color: #991b1b; }
         }
 
-        /* Footer */
-        footer {
-            margin-top: 4rem;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 2rem;
+        /* Chess.com Coordinates */
+        .coord {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 700;
+            pointer-events: none;
+            user-select: none;
+        }
+        .coord-rank {
+            top: 2px;
+            left: 4px;
+        }
+        .coord-file {
+            bottom: 2px;
+            right: 4px;
+        }
+        .square-light .coord { color: var(--square-dark); }
+        .square-dark .coord { color: var(--square-light); }
+
+        .dot {
+            width: 18px;
+            height: 18px;
+            background-color: var(--square-move-dot);
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
         }
 
-        /* --- Responsive Media Queries --- */
-        @media (max-width: 900px) {
-            .hero-preview {
-                display: none;
-            }
-            .hero-title {
-                font-size: 2rem;
-            }
+        /* Smooth Animation Layer */
+        #pieces-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        @media (max-width: 600px) {
-            .app-wrapper {
-                padding: 1rem;
-            }
-            header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .search-bar {
-                max-width: 100%;
-            }
-            .hero-banner {
-                padding: 1.5rem;
-            }
-            .hero-title {
-                font-size: 1.6rem;
+        .piece-img {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            will-change: transform;
+            transition: transform 0.24s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.2s ease;
+            background-size: 90% 90%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        @media (min-width: 540px) {
+            .piece-img {
+                width: 64px;
+                height: 64px;
             }
         }
     </style>
 </head>
+
 <body>
 
-<div class="app-wrapper">
-    <!-- Navigation & Search Header -->
-    <header>
-        <a href="#" class="logo">
-            <div class="logo-icon"><i class="fa-solid fa-gamepad"></i></div>
-            <span class="logo-text">ArcadeHub</span>
-        </a>
-
-        <div class="search-bar">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search games (e.g. Chess, Racing)..." onkeyup="filterGames()">
-        </div>
-    </header>
-
-    <!-- Category Filter Bar -->
-    <div class="categories-nav">
-        <button class="cat-btn active" onclick="selectCategory('all', this)"><i class="fa-solid fa-fire"></i> All Games</button>
-        <button class="cat-btn" onclick="selectCategory('strategy', this)"><i class="fa-solid fa-chess"></i> Strategy</button>
-        <button class="cat-btn" onclick="selectCategory('action', this)"><i class="fa-solid fa-bolt"></i> Action</button>
-        <button class="cat-btn" onclick="selectCategory('puzzle', this)"><i class="fa-solid fa-brain"></i> Puzzle</button>
-        <button class="cat-btn" onclick="selectCategory('racing', this)"><i class="fa-solid fa-car-side"></i> Racing</button>
-        <button class="cat-btn" onclick="selectCategory('2player', this)"><i class="fa-solid fa-user-group"></i> 2 Player</button>
+    <div class="header-bar">
+        <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        <h1>Chess.com Edition</h1>
     </div>
 
-    <!-- Featured Game Spotlight (Hero Banner) -->
-    <div class="hero-banner">
-        <div class="hero-content">
-            <span class="hero-tag"><i class="fa-solid fa-star"></i> Featured Game</span>
-            <h2 class="hero-title">Master Chess 3D</h2>
-            <p class="hero-desc">Play classic chess against intelligent AI or challenge a friend in local 2-player mode with modern graphics and smooth controls.</p>
-            <a href="./chess/index.html" class="btn-play-hero"><i class="fa-solid fa-play"></i> Play Now</a>
-        </div>
-        <div class="hero-preview">
-            ♟️
-        </div>
+    <div class="controls">
+        <div id="turn-indicator"><i class="fa-solid fa-chess-king"></i> Turn: White</div>
+        <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-user-group"></i> Mode: vs Friend</button>
     </div>
 
-    <!-- Main Games Section -->
-    <div class="section-header">
-        <h3 class="section-title"><i class="fa-solid fa-border-all"></i> Popular Games</h3>
+    <!-- Opponent Info -->
+    <div class="player-bar">
+        <div class="avatar"><i class="fa-solid fa-user-ninja"></i></div>
+        <div class="player-name" id="opponent-name">Opponent (Black)</div>
     </div>
 
-    <div class="grid" id="gamesGrid">
-
-        <!-- 1. Chess (Active Game) -->
-        <a href="./chess/index.html" class="card" data-category="strategy 2player">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #1e1b4b, #312e81);">
-                ♟️
-                <span class="card-badge">Strategy</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">Chess</h3>
-                <p class="card-desc">Tactical turn-based strategy against smart AI or real players.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-star"></i> 4.9</span>
-                    <span><i class="fa-solid fa-fire"></i> Popular</span>
-                </div>
-            </div>
-        </a>
-
-        <!-- 2. Tic Tac Toe (Placeholder for next game) -->
-        <a href="#" class="card disabled" data-category="puzzle 2player" onclick="return false;">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #831843, #9d174d);">
-                ❌⭕
-                <span class="card-badge">Puzzle</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">Tic Tac Toe</h3>
-                <p class="card-desc">Classic 3x3 strategy grid game with power-ups.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>2 Player</span>
-                </div>
-            </div>
-        </a>
-
-        <!-- 3. Snake Arena (Placeholder) -->
-        <a href="#" class="card disabled" data-category="action arcade" onclick="return false;">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #064e3b, #047857);">
-                🐍
-                <span class="card-badge">Action</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">Snake Arena</h3>
-                <p class="card-desc">Eat apples, grow long, and beat your high score without hitting walls.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>Arcade</span>
-                </div>
-            </div>
-        </a>
-
-        <!-- 4. 2048 Merge (Placeholder) -->
-        <a href="#" class="card disabled" data-category="puzzle" onclick="return false;">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #78350f, #b45309);">
-                🔢
-                <span class="card-badge">Puzzle</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">2048 Merge</h3>
-                <p class="card-desc">Slide and join numbers to reach the legendary 2048 tile.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>Brain</span>
-                </div>
-            </div>
-        </a>
-
-        <!-- 5. Drift Racing 3D (Placeholder) -->
-        <a href="#" class="card disabled" data-category="racing action" onclick="return false;">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #7f1d1d, #b91c1c);">
-                🏎️
-                <span class="card-badge">Racing</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">Drift Racing</h3>
-                <p class="card-desc">High-speed supercar drifting on city tracks.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>3D Racing</span>
-                </div>
-            </div>
-        </a>
-
-        <!-- 6. Space Invaders (Placeholder) -->
-        <a href="#" class="card disabled" data-category="action arcade" onclick="return false;">
-            <div class="card-thumbnail" style="background: linear-gradient(45deg, #4c1d95, #6d28d9);">
-                👾
-                <span class="card-badge">Arcade</span>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">Space Shooter</h3>
-                <p class="card-desc">Defend the galaxy from alien waves in retro style.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>Retro</span>
-                </div>
-            </div>
-        </a>
-
+    <!-- Board Wrapper -->
+    <div id="board-wrapper">
+        <div id="board"></div>
+        <div id="pieces-layer"></div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 ArcadeHub. Built for high performance browser gaming.</p>
-    </footer>
-</div>
+    <!-- Player Info -->
+    <div class="player-bar">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="player-name">Player (White)</div>
+    </div>
 
-<script>
-    // Search Functionality
-    function filterGames() {
-        const input = document.getElementById('searchInput').value.toLowerCase();
-        const cards = document.querySelectorAll('.grid .card');
+    <script>
+        const P = { NONE: 0, PAWN: 1, KNIGHT: 2, BISHOP: 3, ROOK: 4, QUEEN: 5, KING: 6, W: 8, B: 16 };
+        
+        let board = Array(64).fill(0),
+            turn = P.W,
+            selectedSquare = null,
+            possibleMoves = [],
+            enPassant = null,
+            castling = { wK: true, wQ: true, bK: true, bQ: true },
+            halfmove = 0,
+            history = [],
+            vsAI = false,
+            isAnimating = false,
+            pieceElementsMap = {};
 
-        cards.forEach(card => {
-            const title = card.querySelector('.card-title').innerText.toLowerCase();
-            const desc = card.querySelector('.card-desc').innerText.toLowerCase();
-            if (title.includes(input) || desc.includes(input)) {
-                card.style.display = "flex";
-            } else {
-                card.style.display = "none";
+        // Inline Data-URI SVG Chess Pieces (Chess.com / Lichess Style)
+        const svgInlineData = {
+            'w1': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+            'w4': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="%23ffffff" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14h23l-2 18H13l-2-18zM9 10h4v4H9v-4zM18 10h4v4h-4v-4zM27 10h4v4h-4v-4zM32 10h4v4h-4v-4z"/><path d="M11 14s2.5-1.5 11.5-1.5 11.5 1.5 11.5 1.5"/></g></svg>`,
+            'w2': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c1.05 0 1.53.5 2 1l2 3c0 .6.2 1 .8 1 1.05 0 2 1 2 2v1c0 1 1 3 1 3 0 1-2 3-2 3s2.5 2 2.5 4c0 3-2.5 4-4.5 4-1.5 0-3-1-3-1s-1 1-3 1c-2 0-4.5-1-4.5-4 0-2 2.5-4 2.5-4s-2-2-2-3c0 0 1-2 1-3v-1c0-1 .95-2 2-2 .6 0 .8-.4.8-1l2-3c.47-.5 1-.95 2.05-.95z" fill="%23ffffff"/><path d="M14 26c2.5 2 5 2 8 0M16 18h.01M22 18h.01M9 39h27v-3H9v3zM11 36v-4h23v4H11z"/></g></svg>`,
+            'w3': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="%23ffffff"><path d="M9 36c1.2-2.9 4.8-4.8 13.5-5 8.7.2 12.3 2.1 13.5 5H9z"/><path d="M15 32c2.5-2.5 4.5-6 4.5-11 0-4-3-7.5-3-7.5s4.5-2 9-2 9 2 9 2-3 3.5-3 7.5c0 5 2 8.5 4.5 11H15z"/><path d="M22.5 10c2 0 3-1 3-2s-1-2-3-2-3 1-3 2 1 2 3 2z"/></g><path d="M17.5 26h10M22.5 10v4M20.5 12h4M9 39h27v-3H9v3z"/></g></svg>`,
+            'w5': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 39h29v-3H8v3zM10.5 36v-4h24v4h-24zM9 26l2.5-10.5L17 20l5.5-12.5L28 20l5.5-4.5L36 26H9z" fill="%23ffffff"/><path d="M22.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM9 15.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM36 15.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM17 19.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM28 19.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="%23ffffff"/></g></svg>`,
+            'w6': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linejoin="miter"/><path d="M22.5 25c4.5 0 8-3.5 8-8 0-4-3-5.5-8-10-5 4.5-8 6-8 10 0 4.5 3.5 8 8 8z" fill="%23ffffff"/><path d="M11.5 37c5.5 3.5 16.5 3.5 22 0v-7c0 0-3 2.5-11 2.5s-11-2.5-11-2.5v7z" fill="%23ffffff"/><path d="M11.5 30c5.5-3 16.5-3 22 0M9 39h27v-3H9v3z"/></g></svg>`,
+
+            'b1': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="%232b2b2b" stroke="%23000000" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+            'b4': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="%232b2b2b" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14h23l-2 18H13l-2-18zM9 10h4v4H9v-4zM18 10h4v4h-4v-4zM27 10h4v4h-4v-4zM32 10h4v4h-4v-4z"/><path d="M11 14s2.5-1.5 11.5-1.5 11.5 1.5 11.5 1.5" fill="none"/></g></svg>`,
+            'b2': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c1.05 0 1.53.5 2 1l2 3c0 .6.2 1 .8 1 1.05 0 2 1 2 2v1c0 1 1 3 1 3 0 1-2 3-2 3s2.5 2 2.5 4c0 3-2.5 4-4.5 4-1.5 0-3-1-3-1s-1 1-3 1c-2 0-4.5-1-4.5-4 0-2 2.5-4 2.5-4s-2-2-2-3c0 0 1-2 1-3v-1c0-1 .95-2 2-2 .6 0 .8-.4.8-1l2-3c.47-.5 1-.95 2.05-.95z" fill="%232b2b2b"/><path d="M14 26c2.5 2 5 2 8 0M16 18h.01M22 18h.01M9 39h27v-3H9v3zM11 36v-4h23v4H11z" stroke="%23555"/></g></svg>`,
+            'b3': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="%232b2b2b"><path d="M9 36c1.2-2.9 4.8-4.8 13.5-5 8.7.2 12.3 2.1 13.5 5H9z"/><path d="M15 32c2.5-2.5 4.5-6 4.5-11 0-4-3-7.5-3-7.5s4.5-2 9-2 9 2 9 2-3 3.5-3 7.5c0 5 2 8.5 4.5 11H15z"/><path d="M22.5 10c2 0 3-1 3-2s-1-2-3-2-3 1-3 2 1 2 3 2z"/></g><path d="M17.5 26h10M22.5 10v4M20.5 12h4M9 39h27v-3H9v3z"/></g></svg>`,
+            'b5': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 39h29v-3H8v3zM10.5 36v-4h24v4h-24zM9 26l2.5-10.5L17 20l5.5-12.5L28 20l5.5-4.5L36 26H9z" fill="%232b2b2b"/><path d="M22.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM9 15.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM36 15.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM17 19.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM28 19.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="%232b2b2b"/></g></svg>`,
+            'b6': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="none" fill-rule="evenodd" stroke="%23000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linejoin="miter"/><path d="M22.5 25c4.5 0 8-3.5 8-8 0-4-3-5.5-8-10-5 4.5-8 6-8 10 0 4.5 3.5 8 8 8z" fill="%232b2b2b"/><path d="M11.5 37c5.5 3.5 16.5 3.5 22 0v-7c0 0-3 2.5-11 2.5s-11-2.5-11-2.5v7z" fill="%232b2b2b"/><path d="M11.5 30c5.5-3 16.5-3 22 0M9 39h27v-3H9v3z"/></g></svg>`
+        };
+
+        function getSquareSize() {
+            return window.innerWidth >= 540 ? 64 : 52;
+        }
+
+        function initBoard() {
+            board.fill(0);
+            const row = [P.ROOK, P.KNIGHT, P.BISHOP, P.QUEEN, P.KING, P.BISHOP, P.KNIGHT, P.ROOK];
+            for (let i = 0; i < 8; i++) {
+                board[i] = row[i] | P.B;
+                board[8 + i] = P.PAWN | P.B;
+                board[48 + i] = P.PAWN | P.W;
+                board[56 + i] = row[i] | P.W;
             }
-        });
-    }
+            turn = P.W;
+            selectedSquare = null;
+            possibleMoves = [];
+            enPassant = null;
+            castling = { wK: true, wQ: true, bK: true, bQ: true };
+            halfmove = 0;
+            history = [board.join(',')];
+            renderPieces();
+        }
 
-    // Category Filter Functionality
-    function selectCategory(category, button) {
-        // Highlight active category button
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+        function renderPieces() {
+            const layer = document.getElementById('pieces-layer');
+            layer.innerHTML = '';
+            pieceElementsMap = {};
+            const sqSize = getSquareSize();
 
-        const cards = document.querySelectorAll('.grid .card');
-        cards.forEach(card => {
-            const cardCategories = card.getAttribute('data-category');
-            if (category === 'all' || (cardCategories && cardCategories.includes(category))) {
-                card.style.display = "flex";
-            } else {
-                card.style.display = "none";
+            for (let i = 0; i < 64; i++) {
+                if (board[i]) {
+                    const el = document.createElement('div');
+                    el.className = 'piece-img';
+                    const colorPrefix = (board[i] & P.W) ? 'w' : 'b';
+                    const pieceType = board[i] & 7;
+                    
+                    el.style.backgroundImage = `url("${svgInlineData[`${colorPrefix}${pieceType}`]}")`;
+                    
+                    const r = Math.floor(i / 8);
+                    const c = i % 8;
+                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
+                    
+                    layer.appendChild(el);
+                    pieceElementsMap[i] = el;
+                }
             }
-        });
-    }
-</script>
+        }
 
+        function smoothMovePiece(from, to, callback) {
+            isAnimating = true;
+            const sqSize = getSquareSize();
+            const pieceEl = pieceElementsMap[from];
+            const capturedEl = pieceElementsMap[to];
+
+            const targetRow = Math.floor(to / 8);
+            const targetCol = to % 8;
+
+            if (capturedEl) {
+                capturedEl.style.opacity = '0';
+            }
+
+            if (pieceEl) {
+                pieceEl.style.transform = `translate3d(${targetCol * sqSize}px, ${targetRow * sqSize}px, 0)`;
+            }
+
+            setTimeout(() => {
+                makeMove(from, to);
+                renderPieces();
+                drawBoard();
+                isAnimating = false;
+                if (callback) callback();
+            }, 240);
+        }
+
+        function toggleMode() {
+            if (isAnimating) return;
+            vsAI = !vsAI;
+            const modeBtn = document.getElementById('mode-btn');
+            const oppName = document.getElementById('opponent-name');
+            if (vsAI) {
+                modeBtn.innerHTML = '<i class="fa-solid fa-robot"></i> Mode: vs Bot';
+                oppName.innerHTML = 'Bot AI (Black)';
+            } else {
+                modeBtn.innerHTML = '<i class="fa-solid fa-user-group"></i> Mode: vs Friend';
+                oppName.innerHTML = 'Friend (Black)';
+            }
+            resetGame();
+        }
+
+        function resetGame() {
+            initBoard();
+            drawBoard();
+        }
+
+        function generateMoves(from, fBoard = board, fCastling = castling, fEP = enPassant) {
+            let moves = [], pc = fBoard[from];
+            if (!pc) return moves;
+            let type = pc & 7, col = pc & 24, enemy = col === P.W ? P.B : P.W, r = Math.floor(from / 8), c = from % 8;
+
+            if (type === P.PAWN) {
+                let dir = col === P.W ? -1 : 1, start = col === P.W ? 6 : 1, nxt = from + dir * 8;
+                if (nxt >= 0 && nxt < 64 && !fBoard[nxt]) {
+                    moves.push(nxt);
+                    if (r === start && !fBoard[from + dir * 16]) moves.push(from + dir * 16);
+                }
+                for (let side of [-1, 1]) {
+                    let att = from + dir * 8 + side;
+                    if (att >= 0 && att < 64 && Math.abs((att % 8) - c) === 1) {
+                        if ((fBoard[att] && (fBoard[att] & 24) === enemy) || att === fEP) moves.push(att);
+                    }
+                }
+            } else if (type === P.KNIGHT) {
+                for (let o of [-17, -15, -10, -6, 6, 10, 15, 17]) {
+                    let tc = from + o;
+                    if (tc >= 0 && tc < 64 && Math.max(Math.abs((tc % 8) - c), Math.abs(Math.floor(tc / 8) - r)) <= 2 && (!fBoard[tc] || !(fBoard[tc] & col))) moves.push(tc);
+                }
+            } else if (type === P.KING) {
+                for (let o of [-9, -8, -7, -1, 1, 7, 8, 9]) {
+                    let tc = from + o;
+                    if (tc >= 0 && tc < 64 && Math.max(Math.abs((tc % 8) - c), Math.abs(Math.floor(tc / 8) - r)) === 1 && (!fBoard[tc] || !(fBoard[tc] & col))) moves.push(tc);
+                }
+                if (fBoard === board) {
+                    if (col === P.W && from === 60) {
+                        if (fCastling.wK && !board[61] && !board[62] && !isAttacked(60, P.B) && !isAttacked(61, P.B) && !isAttacked(62, P.B)) moves.push(62);
+                        if (fCastling.wQ && !board[59] && !board[58] && !board[57] && !isAttacked(60, P.B) && !isAttacked(59, P.B) && !isAttacked(58, P.B)) moves.push(58);
+                    } else if (col === P.B && from === 4) {
+                        if (fCastling.bK && !board[5] && !board[6] && !isAttacked(4, P.W) && !isAttacked(5, P.W) && !isAttacked(6, P.W)) moves.push(6);
+                        if (fCastling.bQ && !board[3] && !board[2] && !board[1] && !isAttacked(4, P.W) && !isAttacked(3, P.W) && !isAttacked(2, P.W)) moves.push(2);
+                    }
+                }
+            } else {
+                let dirs = [];
+                if (type === P.BISHOP || type === P.QUEEN) dirs.push([-1, -1], [-1, 1], [1, -1], [1, 1]);
+                if (type === P.ROOK || type === P.QUEEN) dirs.push([-1, 0], [1, 0], [0, -1], [0, 1]);
+                for (let d of dirs) {
+                    let cr = r, cc = c;
+                    while (true) {
+                        cr += d[0]; cc += d[1];
+                        if (cr < 0 || cr >= 8 || cc < 0 || cc >= 8) break;
+                        let tc = cr * 8 + cc;
+                        if (!fBoard[tc]) moves.push(tc);
+                        else {
+                            if ((fBoard[tc] & 24) === enemy) moves.push(tc);
+                            break;
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+
+        function isAttacked(sq, byCol, fBoard = board) {
+            for (let i = 0; i < 64; i++) {
+                if ((fBoard[i] & 24) === byCol && generateMoves(i, fBoard, castling, null).includes(sq)) return true;
+            }
+            return false;
+        }
+
+        function getKing(col, fBoard = board) {
+            for (let i = 0; i < 64; i++) {
+                if ((fBoard[i] & 7) === P.KING && (fBoard[i] & 24) === col) return i;
+            }
+            return -1;
+        }
+
+        function makeMove(from, to) {
+            let pc = board[from], type = pc & 7, col = pc & 24, isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
+
+            if (type === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
+            if (type === P.KING) {
+                if (from === 60 && to === 62) { board[61] = board[63]; board[63] = 0; }
+                if (from === 60 && to === 58) { board[59] = board[56]; board[56] = 0; }
+                if (from === 4 && to === 6) { board[5] = board[7]; board[7] = 0; }
+                if (from === 4 && to === 2) { board[3] = board[0]; board[0] = 0; }
+                if (col === P.W) castling.wK = castling.wQ = false;
+                else castling.bK = castling.bQ = false;
+            }
+            if (type === P.ROOK) {
+                if (from === 56) castling.wQ = false;
+                if (from === 63) castling.wK = false;
+                if (from === 0) castling.bQ = false;
+                if (from === 7) castling.bK = false;
+            }
+            if (to === 56) castling.wQ = false;
+            if (to === 63) castling.wK = false;
+            if (to === 0) castling.bQ = false;
+            if (to === 7) castling.bK = false;
+
+            board[to] = pc;
+            board[from] = 0;
+            enPassant = (type === P.PAWN && Math.abs(to - from) === 16) ? to + (col === P.W ? 8 : -8) : null;
+            if (type === P.PAWN && (Math.floor(to / 8) === 0 || Math.floor(to / 8) === 7)) board[to] = P.QUEEN | col;
+            halfmove = (type === P.PAWN || isCap) ? 0 : halfmove + 1;
+            turn = turn === P.W ? P.B : P.W;
+            history.push(board.join(','));
+        }
+
+        function getLegalMoves(from) {
+            let raw = generateMoves(from), legal = [], col = board[from] & 24;
+            for (let to of raw) {
+                let saved = [...board], savedC = { ...castling }, savedEP = enPassant;
+                if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
+                board[to] = board[from]; board[from] = 0;
+                let kingSq = getKing(col);
+                if (kingSq !== -1 && !isAttacked(kingSq, col === P.W ? P.B : P.W)) legal.push(to);
+                board = saved; castling = savedC; enPassant = savedEP;
+            }
+            return legal;
+        }
+
+        function hasMoves(col) {
+            for (let i = 0; i < 64; i++) {
+                if ((board[i] & 24) === col && getLegalMoves(i).length > 0) return true;
+            }
+            return false;
+        }
+
+        function isDraw() {
+            if (halfmove >= 100) return "Draw: 50 moves!";
+            if (history.filter(x => x === board.join(',')).length >= 3) return "Draw: Repetition!";
+            return null;
+        }
+
+        function makeAIMove() {
+            let piecesValues = { [P.PAWN]: 10, [P.KNIGHT]: 30, [P.BISHOP]: 30, [P.ROOK]: 50, [P.QUEEN]: 90, [P.KING]: 900 };
+            let allMoves = [];
+            for (let i = 0; i < 64; i++) {
+                if (board[i] && (board[i] & P.B)) {
+                    let moves = getLegalMoves(i);
+                    for (let m of moves) allMoves.push({ from: i, to: m });
+                }
+            }
+            if (allMoves.length === 0) return;
+            allMoves.forEach(mv => {
+                let score = 0;
+                let targetPiece = board[mv.to];
+                if (targetPiece) score += piecesValues[targetPiece & 7] * 2;
+                let currentPieceType = board[mv.from] & 7;
+                if (currentPieceType === P.PAWN) score += (Math.floor(mv.to / 8));
+                mv.score = score + (Math.random() * 3);
+            });
+            allMoves.sort((a, b) => b.score - a.score);
+            let bestMove = allMoves[0];
+            smoothMovePiece(bestMove.from, bestMove.to);
+        }
+
+        function drawBoard() {
+            const el = document.getElementById('board');
+            el.innerHTML = '';
+            let kingCheck = isAttacked(getKing(turn), turn === P.W ? P.B : P.W);
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+            for (let i = 0; i < 64; i++) {
+                const sq = document.createElement('div');
+                let r = Math.floor(i / 8), c = i % 8;
+                const isLight = (r + c) % 2 === 0;
+                sq.classList.add('square', isLight ? 'square-light' : 'square-dark');
+                
+                // Chess.com Rank Labels (1-8)
+                if (c === 0) {
+                    const rankLabel = document.createElement('span');
+                    rankLabel.className = 'coord coord-rank';
+                    rankLabel.textContent = 8 - r;
+                    sq.appendChild(rankLabel);
+                }
+
+                // Chess.com File Labels (a-h)
+                if (r === 7) {
+                    const fileLabel = document.createElement('span');
+                    fileLabel.className = 'coord coord-file';
+                    fileLabel.textContent = files[c];
+                    sq.appendChild(fileLabel);
+                }
+
+                if (selectedSquare === i) sq.classList.add('selected');
+                if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
+                
+                if (possibleMoves.includes(i)) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    sq.appendChild(dot);
+                }
+
+                sq.addEventListener('click', () => {
+                    if (isAnimating) return;
+                    if (vsAI && turn === P.B) return;
+                    if (!hasMoves(P.W) && !hasMoves(P.B)) return;
+
+                    if (selectedSquare === null) {
+                        if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        }
+                    } else {
+                        if (possibleMoves.includes(i)) {
+                            const from = selectedSquare;
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            drawBoard();
+                            smoothMovePiece(from, i, () => {
+                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 250);
+                            });
+                        } else if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        } else {
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            drawBoard();
+                        }
+                    }
+                });
+                el.appendChild(sq);
+            }
+
+            const ind = document.getElementById('turn-indicator');
+            let hm = hasMoves(turn), dr = isDraw();
+            if (!hm) {
+                ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
+                ind.style.backgroundColor = kingCheck ? '#81b64c' : '#45423e';
+                setTimeout(resetGame, 5000);
+            } else if (dr) {
+                ind.innerHTML = `<i class="fa-solid fa-handshake"></i> ${dr} Restart...`;
+                ind.style.backgroundColor = '#45423e';
+                setTimeout(resetGame, 5000);
+            } else {
+                ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
+                ind.style.backgroundColor = '#312e2b';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            renderPieces();
+        });
+
+        initBoard();
+        drawBoard();
+    </script>
 </body>
 </html>
