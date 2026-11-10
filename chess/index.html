@@ -7,6 +7,8 @@
     <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP for Smooth Professional Piece Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <style>
         :root {
@@ -121,13 +123,14 @@
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
         }
 
-        /* Chess Board Container */
+        /* Board Container */
         #board-wrapper {
             padding: 12px;
             background: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            position: relative;
         }
 
         #board {
@@ -137,6 +140,7 @@
             border-radius: 8px;
             overflow: hidden;
             border: 2px solid #334155;
+            position: relative;
         }
 
         @media (min-width: 540px) {
@@ -184,31 +188,55 @@
             z-index: 5;
         }
 
-        /* Pure Colored Pieces with Font Awesome SVG Rendering */
+        /* Piece layer absolutely overlaid on the board */
+        #pieces-layer {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            width: 416px;
+            height: 416px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @media (min-width: 540px) {
+            #pieces-layer {
+                width: 512px;
+                height: 512px;
+            }
+        }
+
         .piece {
-            font-size: 2.2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 52px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2.2rem;
+            user-select: none;
             pointer-events: none;
-            z-index: 2;
-            transition: transform 0.15s ease, opacity 0.15s ease;
+            will-change: transform;
         }
 
         @media (min-width: 540px) {
             .piece {
+                width: 64px;
+                height: 64px;
                 font-size: 2.7rem;
             }
         }
 
         .piece-w {
             color: var(--piece-white);
-            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));
         }
 
         .piece-b {
             color: var(--piece-black);
-            filter: drop-shadow(0 2px 3px rgba(255,255,255,0.25));
+            filter: drop-shadow(0 2px 3px rgba(255,255,255,0.3));
         }
     </style>
 </head>
@@ -227,6 +255,7 @@
 
     <div id="board-wrapper">
         <div id="board"></div>
+        <div id="pieces-layer"></div>
     </div>
 
     <script>
@@ -240,7 +269,8 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true },
             halfmove = 0,
             history = [],
-            vsAI = false;
+            vsAI = false,
+            isAnimating = false;
 
         const faIcons = {
             [P.PAWN]: 'fa-solid fa-chess-pawn',
@@ -250,6 +280,12 @@
             [P.QUEEN]: 'fa-solid fa-chess-queen',
             [P.KING]: 'fa-solid fa-chess-king'
         };
+
+        const pieceDomMap = {};
+
+        function getSquareSize() {
+            return window.innerWidth >= 540 ? 64 : 52;
+        }
 
         function initBoard() {
             board.fill(0);
@@ -267,9 +303,36 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true };
             halfmove = 0;
             history = [board.join(',')];
+            buildPiecesDOM();
+        }
+
+        function buildPiecesDOM() {
+            const layer = document.getElementById('pieces-layer');
+            layer.innerHTML = '';
+            for (let k in pieceDomMap) delete pieceDomMap[k];
+            
+            const sqSize = getSquareSize();
+
+            for (let i = 0; i < 64; i++) {
+                if (board[i]) {
+                    const el = document.createElement('div');
+                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
+                    const iconClass = faIcons[board[i] & 7];
+                    el.className = `piece ${colorClass}`;
+                    el.innerHTML = `<i class="${iconClass}"></i>`;
+                    
+                    const r = Math.floor(i / 8);
+                    const c = i % 8;
+                    gsap.set(el, { x: c * sqSize, y: r * sqSize });
+                    
+                    layer.appendChild(el);
+                    pieceDomMap[i] = el;
+                }
+            }
         }
 
         function toggleMode() {
+            if (isAnimating) return;
             vsAI = !vsAI;
             const modeBtn = document.getElementById('mode-btn');
             modeBtn.innerHTML = vsAI 
@@ -354,6 +417,44 @@
             return -1;
         }
 
+        function smoothMovePiece(from, to, onComplete) {
+            isAnimating = true;
+            const sqSize = getSquareSize();
+            const pieceEl = pieceDomMap[from];
+            const capturedEl = pieceDomMap[to];
+
+            const targetRow = Math.floor(to / 8);
+            const targetCol = to % 8;
+
+            // Fade out captured piece smoothly
+            if (capturedEl) {
+                gsap.to(capturedEl, { scale: 0, opacity: 0, duration: 0.2, ease: "power1.in" });
+            }
+
+            // Smooth gliding animation for moving piece
+            if (pieceEl) {
+                gsap.to(pieceEl, {
+                    x: targetCol * sqSize,
+                    y: targetRow * sqSize,
+                    duration: 0.28,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        makeMove(from, to);
+                        buildPiecesDOM();
+                        drawBoard();
+                        isAnimating = false;
+                        if (onComplete) onComplete();
+                    }
+                });
+            } else {
+                makeMove(from, to);
+                buildPiecesDOM();
+                drawBoard();
+                isAnimating = false;
+                if (onComplete) onComplete();
+            }
+        }
+
         function makeMove(from, to) {
             let pc = board[from], type = pc & 7, col = pc & 24, isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
 
@@ -432,8 +533,7 @@
             });
             allMoves.sort((a, b) => b.score - a.score);
             let bestMove = allMoves[0];
-            makeMove(bestMove.from, bestMove.to);
-            drawBoard();
+            smoothMovePiece(bestMove.from, bestMove.to);
         }
 
         function drawBoard() {
@@ -449,15 +549,6 @@
                 if (selectedSquare === i) sq.classList.add('selected');
                 if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
                 
-                if (board[i]) {
-                    const pieceEl = document.createElement('div');
-                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
-                    const iconClass = faIcons[board[i] & 7];
-                    pieceEl.className = `piece ${colorClass}`;
-                    pieceEl.innerHTML = `<i class="${iconClass}"></i>`;
-                    sq.appendChild(pieceEl);
-                }
-
                 if (possibleMoves.includes(i)) {
                     const dot = document.createElement('div');
                     dot.classList.add('dot');
@@ -465,6 +556,7 @@
                 }
 
                 sq.addEventListener('click', () => {
+                    if (isAnimating) return;
                     if (vsAI && turn === P.B) return;
                     if (!hasMoves(P.W) && !hasMoves(P.B)) return;
 
@@ -479,9 +571,10 @@
                             const from = selectedSquare;
                             selectedSquare = null;
                             possibleMoves = [];
-                            makeMove(from, i);
                             drawBoard();
-                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
+                            smoothMovePiece(from, i, () => {
+                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 250);
+                            });
                         } else if (board[i] && (board[i] & 24) === turn) {
                             selectedSquare = i;
                             possibleMoves = getLegalMoves(i);
@@ -511,6 +604,10 @@
                 ind.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
             }
         }
+
+        window.addEventListener('resize', () => {
+            buildPiecesDOM();
+        });
 
         initBoard();
         drawBoard();
