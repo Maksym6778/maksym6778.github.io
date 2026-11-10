@@ -1,518 +1,489 @@
+Here is your completed **`index.html`** file.
+
+This file includes the **Bible App layout, navigation, and search**, as well as the **chess game section**.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeHub - Free Online Browser Games</title>
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>ArcadeHub - Bible App & Games</title>
     <style>
         :root {
-            --bg-dark: #0b0e14;
-            --bg-card: rgba(18, 24, 38, 0.85);
-            --bg-card-hover: rgba(30, 41, 65, 0.95);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-purple: #8b5cf6;
-            --accent-blue: #38bdf8;
-            --accent-glow: rgba(139, 92, 246, 0.35);
-            --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #06b6d4 100%);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --radius-lg: 16px;
-            --radius-md: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --primary: #0078D7;
+            --bg: #FAFAFA;
+            --text: #333;
+            --sidebar-bg: #EEEEEE;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            position: relative;
-            background: url('bmw.png') no-repeat center center/cover;
-            background-attachment: fixed;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
         }
 
-        /* Dark overlay for ambient gaming vibe */
-        body::before {
-            content: '';
-            position: fixed;
+        /* Top Bar Navigation */
+        #top-nav {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(11, 14, 20, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1;
-        }
-
-        .app-layout {
-            position: relative;
-            z-index: 2;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem 3rem 2rem;
-        }
-
-        /* --- Header / Top Bar --- */
-        header {
+            right: 0;
+            height: 50px;
+            background: #222;
+            color: white;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
+            padding: 0 20px;
+            gap: 15px;
+            z-index: 100;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--text-main);
+        #top-nav h2 {
+            margin: 0;
+            font-size: 18px;
+            margin-right: 20px;
         }
 
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .logo-text {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .search-container {
-            position: relative;
-            flex: 1;
-            max-width: 460px;
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .search-container input {
-            width: 100%;
-            padding: 12px 16px 12px 46px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.25s ease;
-        }
-
-        .search-container input:focus {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 15px var(--accent-glow);
-            background: rgba(15, 23, 42, 0.95);
-        }
-
-        /* --- Category Pills Navigation --- */
-        .categories-bar {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 2rem;
-            scrollbar-width: thin;
-        }
-
-        .cat-chip {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 9px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
+        .top-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .top-btn:hover { background: #555; }
+        .top-btn.active-tab { background: var(--primary); }
+
+        /* Main Container below navbar */
+        #app-container {
             display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .cat-chip:hover, .cat-chip.active {
-            background: var(--accent-purple);
-            color: #ffffff;
-            border-color: var(--accent-purple);
-            box-shadow: 0 4px 14px var(--accent-glow);
-        }
-
-        /* --- Hero Featured Game Showcase --- */
-        .hero-showcase {
-            position: relative;
-            background: linear-gradient(135deg, rgba(30, 27, 75, 0.92) 0%, rgba(15, 23, 42, 0.92) 100%), url('bmw.png') center/cover;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            padding: 2.5rem;
-            margin-bottom: 3rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-info {
-            max-width: 550px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(139, 92, 246, 0.25);
-            color: #c4b5fd;
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-bottom: 1rem;
-        }
-
-        .hero-title {
-            font-size: 2.4rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            line-height: 1.15;
-        }
-
-        .hero-desc {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-play-hero {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--gradient-primary);
-            color: #ffffff;
-            padding: 14px 28px;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 1.05rem;
-            text-decoration: none;
-            box-shadow: 0 8px 25px var(--accent-glow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-play-hero:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.6);
-        }
-
-        .hero-graphic {
-            position: relative;
-            z-index: 2;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5.5rem;
-            color: #a78bfa;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        /* --- Section Header --- */
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title i {
-            color: var(--accent-purple);
-        }
-
-        /* --- Games Grid --- */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .game-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            text-decoration: none;
-            color: var(--text-main);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .game-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.25);
-            background-color: var(--bg-card-hover);
-        }
-
-        .card-thumb {
             width: 100%;
-            height: 160px;
-            background: linear-gradient(45deg, #1e1b4b, #312e81);
+            height: calc(100vh - 50px);
+            margin-top: 50px;
+        }
+
+        /* Bible Layout Elements */
+        #sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            overflow-y: auto;
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Search Header */
+        #header {
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button.search-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button.search-btn:hover { background: #005a9e; }
+
+        /* Navigation styling */
+        .sidebar-title {
+            padding: 15px;
+            margin: 0;
+            background: #ddd;
+            font-size: 18px;
+        }
+
+        #books-list {
+            padding: 10px;
+        }
+
+        #chapters-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            background: #eef;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ccc;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 2px;
+            background: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .chap-btn {
+            width: auto;
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover, .chap-btn:hover { background: #d0d0d0; }
+        .active-btn { font-weight: bold; background: var(--primary) !important; color: white; }
+
+        /* Reading Area */
+        #content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .reading-container {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 20px;
+            font-family: 'Cambria', 'Georgia', serif;
+        }
+
+        .verse {
+            margin-bottom: 12px;
+        }
+
+        .verse-num {
+            font-size: 0.75em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-right: 8px;
+            vertical-align: super;
+        }
+
+        mark {
+            background-color: #ffd700;
+            padding: 2px;
+            border-radius: 3px;
+        }
+
+        /* Chess Section Styling */
+        #chess-section {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #2b2b2b;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 4px solid #444;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .square {
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
-            position: relative;
+            font-size: 40px;
+            cursor: pointer;
+            user-select: none;
         }
 
-        .card-tag {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 12px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid var(--border-color);
-            color: #38bdf8;
-            backdrop-filter: blur(6px);
-        }
+        .square.white { background-color: #f0d9b5; color: #000; }
+        .square.black { background-color: #b58863; color: #000; }
+        .square.selected { background-color: #7b61ff !important; }
 
-        .card-info {
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .card-desc {
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            flex-grow: 1;
-        }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 0.75rem;
-        }
-
-        .card-rating {
-            color: #fbbf24;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 600;
-        }
-
-        /* Coming Soon State (Placeholder Card) */
-        .game-card.placeholder {
-            border-style: dashed;
-            opacity: 0.65;
-        }
-
-        .game-card.placeholder:hover {
-            transform: none;
-            box-shadow: none;
-            border-color: var(--border-color);
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 4rem;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 2rem;
-        }
-
-        @media (max-width: 850px) {
-            .hero-graphic { display: none; }
-            .hero-title { font-size: 1.8rem; }
-        }
-
-        @media (max-width: 600px) {
-            .app-layout { padding: 1rem; }
-            header { flex-direction: column; align-items: stretch; }
-            .search-container { max-width: 100%; }
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            #app-container { flex-direction: column; }
+            #sidebar { width: 100%; height: 150px; border-right: none; border-bottom: 1px solid #ccc; }
+            .square { width: 40px; height: 40px; font-size: 26px; }
+            .chess-board { grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
         }
     </style>
 </head>
 <body>
 
-<div class="app-layout">
-    <!-- Header -->
-    <header>
-        <a href="#" class="logo">
-            <div class="logo-icon"><i class="fa-solid fa-gamepad"></i></div>
-            <span class="logo-text">ArcadeHub</span>
-        </a>
-
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search games..." onkeyup="filterGames()">
-        </div>
-    </header>
-
-    <!-- Category Filter Bar -->
-    <div class="categories-bar">
-        <button class="cat-chip active" onclick="filterCategory('all', this)"><i class="fa-solid fa-fire"></i> All Games</button>
-        <button class="cat-chip" onclick="filterCategory('strategy', this)"><i class="fa-solid fa-chess"></i> Strategy</button>
-        <button class="cat-chip" onclick="filterCategory('action', this)"><i class="fa-solid fa-bolt"></i> Action</button>
-        <button class="cat-chip" onclick="filterCategory('puzzle', this)"><i class="fa-solid fa-brain"></i> Puzzle</button>
-        <button class="cat-chip" onclick="filterCategory('2player', this)"><i class="fa-solid fa-user-group"></i> 2 Player</button>
+    <!-- Top Navigation Bar -->
+    <div id="top-nav">
+        <h2>Maksym6778 Site</h2>
+        <button class="top-btn active-tab" id="btn-bible" onclick="showSection('bible')">Bible App</button>
+        <button class="top-btn" id="btn-chess" onclick="showSection('chess')">Chess Game</button>
     </div>
 
-    <!-- Hero Banner (Featured Game) -->
-    <div class="hero-showcase">
-        <div class="hero-info">
-            <span class="hero-badge"><i class="fa-solid fa-star"></i> Featured Game</span>
-            <h2 class="hero-title">Chess PRO Edition</h2>
-            <p class="hero-desc">Play classic chess with smooth animations, AI opponents, and full Chess.com styling!</p>
-            <a href="./chess/index.html" class="btn-play-hero"><i class="fa-solid fa-play"></i> Play Now</a>
+    <!-- Main Container -->
+    <div id="app-container">
+
+        <!-- BIBLE APP SECTION -->
+        <div id="sidebar">
+            <h3 class="sidebar-title">Books</h3>
+            <div id="books-list"></div>
         </div>
-        <div class="hero-graphic">
-            ♟️
-        </div>
-    </div>
 
-    <!-- Games Section -->
-    <h3 class="section-title"><i class="fa-solid fa-border-all"></i> Game Library</h3>
-
-    <div class="games-grid" id="gamesGrid">
-
-        <!-- 1. Active Chess Game -->
-        <a href="./chess/index.html" class="game-card" data-category="strategy 2player">
-            <div class="card-thumb">
-                ♟️
-                <span class="card-tag">Strategy</span>
+        <div id="main">
+            <div id="header">
+                <input type="text" id="search-input" placeholder="Search scripture...">
+                <button class="search-btn" onclick="app.search()">Search</button>
             </div>
-            <div class="card-info">
-                <h3 class="card-title">Chess PRO</h3>
-                <p class="card-desc">Tactical turn-based strategy game vs Smart AI or your friends.</p>
-                <div class="card-footer">
-                    <span class="card-rating"><i class="fa-solid fa-star"></i> 4.9</span>
-                    <span><i class="fa-solid fa-fire"></i> Popular</span>
-                </div>
-            </div>
-        </a>
+            
+            <div id="chapters-list"></div>
 
-        <!-- 2. Placeholder for Next Game -->
-        <div class="game-card placeholder" data-category="action puzzle 2player">
-            <div class="card-thumb" style="background: linear-gradient(45deg, #1e293b, #0f172a);">
-                🎮
-                <span class="card-tag" style="color: #a78bfa;">Upcoming</span>
-            </div>
-            <div class="card-info">
-                <h3 class="card-title">More Games Soon</h3>
-                <p class="card-desc">New awesome browser games are currently in development.</p>
-                <div class="card-footer">
-                    <span><i class="fa-solid fa-clock"></i> Coming Soon</span>
-                    <span>ArcadeHub</span>
+            <div id="content">
+                <div class="reading-container" id="verses">
+                    <p>Select a book and chapter to begin reading.</p>
                 </div>
             </div>
         </div>
 
+        <!-- CHESS GAME SECTION -->
+        <div id="chess-section">
+            <h2>Chess Game</h2>
+            <div class="chess-board" id="chessboard"></div>
+            <p id="chess-status" style="margin-top: 15px; font-size: 18px;">Click a piece to select, then click a square to move.</p>
+        </div>
+
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 ArcadeHub. Modern Browser Gaming Platform.</p>
-    </footer>
-</div>
+    <script>
+        // --- SECTION SWITCHING ---
+        function showSection(section) {
+            var bibleSidebar = document.getElementById('sidebar');
+            var bibleMain = document.getElementById('main');
+            var chessSection = document.getElementById('chess-section');
+            var btnBible = document.getElementById('btn-bible');
+            var btnChess = document.getElementById('btn-chess');
 
-<script>
-    function filterGames() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const cards = document.querySelectorAll('.games-grid .game-card');
-
-        cards.forEach(card => {
-            const title = card.querySelector('.card-title').innerText.toLowerCase();
-            const desc = card.querySelector('.card-desc').innerText.toLowerCase();
-            if (title.includes(query) || desc.includes(query)) {
-                card.style.display = "flex";
+            if (section === 'bible') {
+                bibleSidebar.style.display = 'flex';
+                bibleMain.style.display = 'flex';
+                chessSection.style.display = 'none';
+                btnBible.classList.add('active-tab');
+                btnChess.classList.remove('active-tab');
             } else {
-                card.style.display = "none";
+                bibleSidebar.style.display = 'none';
+                bibleMain.style.display = 'none';
+                chessSection.style.display = 'flex';
+                btnChess.classList.add('active-tab');
+                btnBible.classList.remove('active-tab');
             }
-        });
-    }
+        }
 
-    function filterCategory(cat, btn) {
-        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
+        // --- BIBLE APP LOGIC ---
+        var Bible = [];
+        var bookNames = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation"];
+        var ch = [50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 10, 42, 150, 31, 12, 8, 66, 52, 5, 48, 12, 14, 3, 9, 1, 4, 7, 3, 3, 3, 2, 14, 4, 28, 16, 24, 21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22]; 
 
-        const cards = document.querySelectorAll('.games-grid .game-card');
-        cards.forEach(card => {
-            const categories = card.getAttribute('data-category');
-            if (cat === 'all' || (categories && categories.includes(cat))) {
-                card.style.display = "flex";
+        for (var a = 1; a <= 66; a++) {
+            Bible[a] = [];
+            for (var b = 1; b <= ch[a - 1]; b++) {
+                Bible[a][b] = [];
+            }
+        }
+
+        // Sample Bible Verses (Genesis 1:1-5)
+        Bible[1][1][1] = "In the beginning God created the heaven and the earth.";
+        Bible[1][1][2] = "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.";
+        Bible[1][1][3] = "And God said, Let there be light: and there was light.";
+        Bible[1][1][4] = "And God saw the light, that it was good: and God divided the light from the darkness.";
+        Bible[1][1][5] = "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.";
+
+        var currentBook = 1;
+        var currentChapter = 1;
+
+        var app = {
+            init: function() {
+                this.renderBooks();
+                this.selectBook(1);
+            },
+            renderBooks: function() {
+                var booksContainer = document.getElementById('books-list');
+                booksContainer.innerHTML = '';
+                bookNames.forEach(function(name, index) {
+                    var btn = document.createElement('button');
+                    btn.className = 'nav-btn';
+                    btn.id = 'book-btn-' + (index + 1);
+                    btn.textContent = name;
+                    btn.onclick = function() { app.selectBook(index + 1); };
+                    booksContainer.appendChild(btn);
+                });
+            },
+            selectBook: function(bookNum) {
+                currentBook = bookNum;
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-btn'));
+                var activeBtn = document.getElementById('book-btn-' + bookNum);
+                if (activeBtn) activeBtn.classList.add('active-btn');
+
+                var chapContainer = document.getElementById('chapters-list');
+                chapContainer.innerHTML = '';
+                var totalChaps = ch[bookNum - 1];
+
+                for (var i = 1; i <= totalChaps; i++) {
+                    (function(chapNum) {
+                        var btn = document.createElement('button');
+                        btn.className = 'chap-btn';
+                        btn.id = 'chap-btn-' + chapNum;
+                        btn.textContent = chapNum;
+                        btn.onclick = function() { app.selectChapter(chapNum); };
+                        chapContainer.appendChild(btn);
+                    })(i);
+                }
+                this.selectChapter(1);
+            },
+            selectChapter: function(chapNum) {
+                currentChapter = chapNum;
+                document.querySelectorAll('.chap-btn').forEach(b => b.classList.remove('active-btn'));
+                var activeChap = document.getElementById('chap-btn-' + chapNum);
+                if (activeChap) activeChap.classList.add('active-btn');
+
+                var versesContainer = document.getElementById('verses');
+                versesContainer.innerHTML = '';
+
+                var chapterData = Bible[currentBook] ? Bible[currentBook][currentChapter] : null;
+
+                if (chapterData && Object.keys(chapterData).length > 0) {
+                    for (var verseNum in chapterData) {
+                        var p = document.createElement('p');
+                        p.className = 'verse';
+                        p.innerHTML = '<span class="verse-num">' + verseNum + '</span>' + chapterData[verseNum];
+                        versesContainer.appendChild(p);
+                    }
+                } else {
+                    versesContainer.innerHTML = '<p>Chapter content for ' + bookNames[currentBook - 1] + ' ' + chapNum + ' will load here.</p>';
+                }
+            },
+            search: function() {
+                var query = document.getElementById('search-input').value.toLowerCase().trim();
+                if (!query) return;
+
+                var versesContainer = document.getElementById('verses');
+                versesContainer.innerHTML = '<h3>Search results for: "' + query + '"</h3>';
+                var found = false;
+
+                for (var b = 1; b <= 66; b++) {
+                    if (!Bible[b]) continue;
+                    for (var c = 1; c <= ch[b - 1]; c++) {
+                        if (!Bible[b][c]) continue;
+                        for (var v in Bible[b][c]) {
+                            var text = Bible[b][c][v];
+                            if (text && text.toLowerCase().includes(query)) {
+                                found = true;
+                                var p = document.createElement('p');
+                                p.className = 'verse';
+                                var highlighted = text.replace(new RegExp(query, 'gi'), function(match) {
+                                    return '<mark>' + match + '</mark>';
+                                });
+                                p.innerHTML = '<strong>' + bookNames[b - 1] + ' ' + c + ':' + v + '</strong> - ' + highlighted;
+                                versesContainer.appendChild(p);
+                            }
+                        }
+                    }
+                }
+
+                if (!found) {
+                    versesContainer.innerHTML += '<p>No verses found matching your query.</p>';
+                }
+            }
+        };
+
+        app.init();
+
+        // --- CHESS GAME LOGIC ---
+        var boardState = [
+            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
+            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+        ];
+
+        var selectedSquare = null;
+
+        function createBoard() {
+            var boardElement = document.getElementById('chessboard');
+            boardElement.innerHTML = '';
+
+            for (var row = 0; row < 8; row++) {
+                for (var col = 0; col < 8; col++) {
+                    var square = document.createElement('div');
+                    square.className = 'square ' + ((row + col) % 2 === 0 ? 'white' : 'black');
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    square.textContent = boardState[row][col];
+                    square.onclick = handleSquareClick;
+                    boardElement.appendChild(square);
+                }
+            }
+        }
+
+        function handleSquareClick(e) {
+            var square = e.currentTarget;
+            var r = parseInt(square.dataset.row);
+            var c = parseInt(square.dataset.col);
+
+            if (selectedSquare) {
+                var prevRow = selectedSquare.row;
+                var prevCol = selectedSquare.col;
+
+                boardState[r][c] = boardState[prevRow][prevCol];
+                boardState[prevRow][prevCol] = '';
+
+                selectedSquare = null;
+                createBoard();
             } else {
-                card.style.display = "none";
+                if (boardState[r][c] !== '') {
+                    selectedSquare = { row: r, col: c };
+                    square.classList.add('selected');
+                }
             }
-        });
-    }
-</script>
+        }
 
+        createBoard();
+    </script>
 </body>
 </html>
+
+```
