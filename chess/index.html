@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Premium PRO - ArcadeHub</title>
-    <!-- Google Fonts & Icons -->
+    <title>Chess PRO - ArcadeHub</title>
+    <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --bg-dark: #0a0d14;
-            --card-bg: rgba(18, 24, 38, 0.9);
-            --accent-blue: #38bdf8;
-            --accent-purple: #8b5cf6;
+            --board-border: #1e293b;
             --square-light: #e2e8f0;
             --square-dark: #475569;
             --square-select: #f59e0b;
             --square-check: #ef4444;
-            --square-move: #10b981;
+            --square-move-dot: rgba(16, 185, 129, 0.7);
+            --piece-white: #ffffff;
+            --piece-black: #0f172a;
         }
 
         * {
@@ -72,7 +72,6 @@
         h1 {
             font-size: 1.6rem;
             font-weight: 800;
-            letter-spacing: -0.02em;
             background: linear-gradient(to right, #38bdf8, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -90,7 +89,7 @@
 
         #turn-indicator {
             font-size: 0.95rem;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             padding: 10px 18px;
             border-radius: 12px;
             font-weight: 700;
@@ -104,7 +103,7 @@
 
         #mode-btn {
             padding: 10px 18px;
-            background: linear-gradient(135deg, var(--accent-purple), #6366f1);
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
             border: none;
             border-radius: 12px;
             color: white;
@@ -123,28 +122,30 @@
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
         }
 
-        /* Chess Board Layout */
+        /* Chess Board Container */
         #board-wrapper {
             padding: 12px;
             background: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            position: relative;
         }
 
         #board {
             display: grid;
-            grid-template-columns: repeat(8, 48px);
-            grid-template-rows: repeat(8, 48px);
+            grid-template-columns: repeat(8, 52px);
+            grid-template-rows: repeat(8, 52px);
             border-radius: 8px;
             overflow: hidden;
             border: 2px solid #334155;
+            position: relative;
         }
 
-        @media (min-width: 520px) {
+        @media (min-width: 540px) {
             #board {
-                grid-template-columns: repeat(8, 62px);
-                grid-template-rows: repeat(8, 62px);
+                grid-template-columns: repeat(8, 64px);
+                grid-template-rows: repeat(8, 64px);
             }
         }
 
@@ -154,34 +155,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
             cursor: pointer;
             user-select: none;
             position: relative;
             transition: background-color 0.15s ease;
         }
 
-        @media (min-width: 520px) {
-            .square {
-                font-size: 2.8rem;
-            }
-        }
+        .light { background-color: var(--square-light); }
+        .dark { background-color: var(--square-dark); }
 
-        .light {
-            background-color: var(--square-light);
-        }
-
-        .dark {
-            background-color: var(--square-dark);
-        }
-
-        .square.selected {
-            background-color: var(--square-select) !important;
-        }
+        .square.selected { background-color: var(--square-select) !important; }
 
         .square.in-check {
             background-color: var(--square-check) !important;
-            animation: pulse-red 1.2s infinite alternate;
+            animation: pulse-red 1s infinite alternate;
         }
 
         @keyframes pulse-red {
@@ -190,31 +177,49 @@
         }
 
         .dot {
-            width: 16px;
-            height: 16px;
-            background-color: rgba(16, 185, 129, 0.85);
+            width: 18px;
+            height: 18px;
+            background-color: var(--square-move-dot);
             border-radius: 50%;
             position: absolute;
             pointer-events: none;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            z-index: 5;
         }
 
-        /* Distinct Piece Styles (Crisp Black & Crisp White) */
+        /* Animated Pieces Layer */
+        .piece {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.22s cubic-bezier(0.2, 0, 0.2, 1);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @media (min-width: 540px) {
+            .piece {
+                width: 64px;
+                height: 64px;
+                font-size: 2.7rem;
+            }
+        }
+
+        /* Pure Colored Pieces with Font Awesome SVG Rendering */
         .piece-w {
-            color: #ffffff;
-            text-shadow: 
-                0 0 2px #000, 
-                1px 1px 3px rgba(0, 0, 0, 0.8),
-                -1px -1px 3px rgba(0, 0, 0, 0.8);
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+            color: var(--piece-white);
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
         }
 
         .piece-b {
-            color: #0f172a;
-            text-shadow: 
-                0 0 2px #fff,
-                1px 1px 2px rgba(255, 255, 255, 0.5);
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            color: var(--piece-black);
+            filter: drop-shadow(0 3px 5px rgba(255,255,255,0.25));
         }
     </style>
 </head>
@@ -228,50 +233,40 @@
 
     <div class="controls">
         <div id="turn-indicator"><i class="fa-solid fa-chess-king"></i> Turn: White</div>
-        <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-robot"></i> Mode: vs Friend</button>
+        <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-user-group"></i> Mode: vs Friend</button>
     </div>
 
     <div id="board-wrapper">
         <div id="board"></div>
+        <div id="pieces-layer"></div>
     </div>
 
     <script>
-        const P = {
-            NONE: 0,
-            PAWN: 1,
-            KNIGHT: 2,
-            BISHOP: 3,
-            ROOK: 4,
-            QUEEN: 5,
-            KING: 6,
-            W: 8,
-            B: 16
-        };
-
+        const P = { NONE: 0, PAWN: 1, KNIGHT: 2, BISHOP: 3, ROOK: 4, QUEEN: 5, KING: 6, W: 8, B: 16 };
+        
         let board = Array(64).fill(0),
             turn = P.W,
             selectedSquare = null,
             possibleMoves = [],
-            enPassant = null;
-
-        let castling = {
-                wK: true,
-                wQ: true,
-                bK: true,
-                bQ: true
-            },
+            enPassant = null,
+            castling = { wK: true, wQ: true, bK: true, bQ: true },
             halfmove = 0,
             history = [],
-            vsAI = false;
+            vsAI = false,
+            pieceElements = {};
 
-        const symbols = {
-            [P.PAWN]: '♟',
-            [P.ROOK]: '♜',
-            [P.KNIGHT]: '♞',
-            [P.BISHOP]: '♝',
-            [P.QUEEN]: '♛',
-            [P.KING]: '♚'
+        const faIcons = {
+            [P.PAWN]: 'fa-solid fa-chess-pawn',
+            [P.ROOK]: 'fa-solid fa-chess-rook',
+            [P.KNIGHT]: 'fa-solid fa-chess-knight',
+            [P.BISHOP]: 'fa-solid fa-chess-bishop',
+            [P.QUEEN]: 'fa-solid fa-chess-queen',
+            [P.KING]: 'fa-solid fa-chess-king'
         };
+
+        function getSquareSize() {
+            return window.innerWidth >= 540 ? 64 : 52;
+        }
 
         function initBoard() {
             board.fill(0);
@@ -286,14 +281,59 @@
             selectedSquare = null;
             possibleMoves = [];
             enPassant = null;
-            castling = {
-                wK: true,
-                wQ: true,
-                bK: true,
-                bQ: true
-            };
+            castling = { wK: true, wQ: true, bK: true, bQ: true };
             halfmove = 0;
             history = [board.join(',')];
+            buildPiecesDOM();
+        }
+
+        function buildPiecesDOM() {
+            const layer = document.getElementById('pieces-layer');
+            layer.innerHTML = '';
+            pieceElements = {};
+            const sqSize = getSquareSize();
+
+            for (let i = 0; i < 64; i++) {
+                if (board[i]) {
+                    const el = document.createElement('div');
+                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
+                    const iconClass = faIcons[board[i] & 7];
+                    el.className = `piece ${colorClass}`;
+                    el.innerHTML = `<i class="${iconClass}"></i>`;
+                    
+                    const r = Math.floor(i / 8);
+                    const c = i % 8;
+                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
+                    
+                    layer.appendChild(el);
+                    pieceElements[i] = el;
+                }
+            }
+        }
+
+        function updatePiecesDOM() {
+            const sqSize = getSquareSize();
+            const newPieceElements = {};
+            const layer = document.getElementById('pieces-layer');
+            layer.innerHTML = '';
+
+            for (let i = 0; i < 64; i++) {
+                if (board[i]) {
+                    const el = document.createElement('div');
+                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
+                    const iconClass = faIcons[board[i] & 7];
+                    el.className = `piece ${colorClass}`;
+                    el.innerHTML = `<i class="${iconClass}"></i>`;
+                    
+                    const r = Math.floor(i / 8);
+                    const c = i % 8;
+                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
+                    
+                    layer.appendChild(el);
+                    newPieceElements[i] = el;
+                }
+            }
+            pieceElements = newPieceElements;
         }
 
         function toggleMode() {
@@ -311,19 +351,12 @@
         }
 
         function generateMoves(from, fBoard = board, fCastling = castling, fEP = enPassant) {
-            let moves = [],
-                pc = fBoard[from];
+            let moves = [], pc = fBoard[from];
             if (!pc) return moves;
-            let type = pc & 7,
-                col = pc & 24,
-                enemy = col === P.W ? P.B : P.W,
-                r = Math.floor(from / 8),
-                c = from % 8;
+            let type = pc & 7, col = pc & 24, enemy = col === P.W ? P.B : P.W, r = Math.floor(from / 8), c = from % 8;
 
             if (type === P.PAWN) {
-                let dir = col === P.W ? -1 : 1,
-                    start = col === P.W ? 6 : 1,
-                    nxt = from + dir * 8;
+                let dir = col === P.W ? -1 : 1, start = col === P.W ? 6 : 1, nxt = from + dir * 8;
                 if (nxt >= 0 && nxt < 64 && !fBoard[nxt]) {
                     moves.push(nxt);
                     if (r === start && !fBoard[from + dir * 16]) moves.push(from + dir * 16);
@@ -358,11 +391,9 @@
                 if (type === P.BISHOP || type === P.QUEEN) dirs.push([-1, -1], [-1, 1], [1, -1], [1, 1]);
                 if (type === P.ROOK || type === P.QUEEN) dirs.push([-1, 0], [1, 0], [0, -1], [0, 1]);
                 for (let d of dirs) {
-                    let cr = r,
-                        cc = c;
+                    let cr = r, cc = c;
                     while (true) {
-                        cr += d[0];
-                        cc += d[1];
+                        cr += d[0]; cc += d[1];
                         if (cr < 0 || cr >= 8 || cc < 0 || cc >= 8) break;
                         let tc = cr * 8 + cc;
                         if (!fBoard[tc]) moves.push(tc);
@@ -390,30 +421,33 @@
             return -1;
         }
 
+        function animateAndMove(from, to, callback) {
+            const sqSize = getSquareSize();
+            const el = pieceElements[from];
+            
+            if (el) {
+                const tr = Math.floor(to / 8);
+                const tc = to % 8;
+                el.style.transform = `translate3d(${tc * sqSize}px, ${tr * sqSize}px, 0)`;
+            }
+
+            setTimeout(() => {
+                makeMove(from, to);
+                updatePiecesDOM();
+                drawBoard();
+                if (callback) callback();
+            }, 230);
+        }
+
         function makeMove(from, to) {
-            let pc = board[from],
-                type = pc & 7,
-                col = pc & 24,
-                isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
+            let pc = board[from], type = pc & 7, col = pc & 24, isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
 
             if (type === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
             if (type === P.KING) {
-                if (from === 60 && to === 62) {
-                    board[61] = board[63];
-                    board[63] = 0;
-                }
-                if (from === 60 && to === 58) {
-                    board[59] = board[56];
-                    board[56] = 0;
-                }
-                if (from === 4 && to === 6) {
-                    board[5] = board[7];
-                    board[7] = 0;
-                }
-                if (from === 4 && to === 2) {
-                    board[3] = board[0];
-                    board[0] = 0;
-                }
+                if (from === 60 && to === 62) { board[61] = board[63]; board[63] = 0; }
+                if (from === 60 && to === 58) { board[59] = board[56]; board[56] = 0; }
+                if (from === 4 && to === 6) { board[5] = board[7]; board[7] = 0; }
+                if (from === 4 && to === 2) { board[3] = board[0]; board[0] = 0; }
                 if (col === P.W) castling.wK = castling.wQ = false;
                 else castling.bK = castling.bQ = false;
             }
@@ -438,21 +472,14 @@
         }
 
         function getLegalMoves(from) {
-            let raw = generateMoves(from),
-                legal = [],
-                col = board[from] & 24;
+            let raw = generateMoves(from), legal = [], col = board[from] & 24;
             for (let to of raw) {
-                let saved = [...board],
-                    savedC = { ...castling },
-                    savedEP = enPassant;
+                let saved = [...board], savedC = { ...castling }, savedEP = enPassant;
                 if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
-                board[to] = board[from];
-                board[from] = 0;
+                board[to] = board[from]; board[from] = 0;
                 let kingSq = getKing(col);
                 if (kingSq !== -1 && !isAttacked(kingSq, col === P.W ? P.B : P.W)) legal.push(to);
-                board = saved;
-                castling = savedC;
-                enPassant = savedEP;
+                board = saved; castling = savedC; enPassant = savedEP;
             }
             return legal;
         }
@@ -470,24 +497,13 @@
             return null;
         }
 
-        /* Bot AI Movement logic */
         function makeAIMove() {
-            let piecesValues = {
-                [P.PAWN]: 10,
-                [P.KNIGHT]: 30,
-                [P.BISHOP]: 30,
-                [P.ROOK]: 50,
-                [P.QUEEN]: 90,
-                [P.KING]: 900
-            };
+            let piecesValues = { [P.PAWN]: 10, [P.KNIGHT]: 30, [P.BISHOP]: 30, [P.ROOK]: 50, [P.QUEEN]: 90, [P.KING]: 900 };
             let allMoves = [];
             for (let i = 0; i < 64; i++) {
                 if (board[i] && (board[i] & P.B)) {
                     let moves = getLegalMoves(i);
-                    for (let m of moves) allMoves.push({
-                        from: i,
-                        to: m
-                    });
+                    for (let m of moves) allMoves.push({ from: i, to: m });
                 }
             }
             if (allMoves.length === 0) return;
@@ -501,33 +517,32 @@
             });
             allMoves.sort((a, b) => b.score - a.score);
             let bestMove = allMoves[0];
-            makeMove(bestMove.from, bestMove.to);
-            drawBoard();
+            animateAndMove(bestMove.from, bestMove.to);
         }
 
         function drawBoard() {
             const el = document.getElementById('board');
             el.innerHTML = '';
             let kingCheck = isAttacked(getKing(turn), turn === P.W ? P.B : P.W);
+            
             for (let i = 0; i < 64; i++) {
                 const sq = document.createElement('div');
-                let r = Math.floor(i / 8),
-                    c = i % 8;
+                let r = Math.floor(i / 8), c = i % 8;
                 sq.classList.add('square', (r + c) % 2 === 0 ? 'light' : 'dark');
-                if (board[i]) {
-                    sq.textContent = symbols[board[i] & 7];
-                    sq.classList.add((board[i] & P.W) ? 'piece-w' : 'piece-b');
-                }
+                
                 if (selectedSquare === i) sq.classList.add('selected');
                 if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
+                
                 if (possibleMoves.includes(i)) {
                     const dot = document.createElement('div');
                     dot.classList.add('dot');
                     sq.appendChild(dot);
                 }
+
                 sq.addEventListener('click', () => {
                     if (vsAI && turn === P.B) return;
                     if (!hasMoves(P.W) && !hasMoves(P.B)) return;
+
                     if (selectedSquare === null) {
                         if (board[i] && (board[i] & 24) === turn) {
                             selectedSquare = i;
@@ -536,11 +551,12 @@
                         }
                     } else {
                         if (possibleMoves.includes(i)) {
-                            makeMove(selectedSquare, i);
+                            const from = selectedSquare;
                             selectedSquare = null;
                             possibleMoves = [];
-                            drawBoard();
-                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 400);
+                            animateAndMove(from, i, () => {
+                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
+                            });
                         } else if (board[i] && (board[i] & 24) === turn) {
                             selectedSquare = i;
                             possibleMoves = getLegalMoves(i);
@@ -554,9 +570,9 @@
                 });
                 el.appendChild(sq);
             }
+
             const ind = document.getElementById('turn-indicator');
-            let hm = hasMoves(turn),
-                dr = isDraw();
+            let hm = hasMoves(turn), dr = isDraw();
             if (!hm) {
                 ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
                 ind.style.backgroundColor = kingCheck ? '#10b981' : '#64748b';
@@ -567,9 +583,13 @@
                 setTimeout(resetGame, 5000);
             } else {
                 ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
-                ind.style.backgroundColor = 'rgba(15, 23, 42, 0.8)';
+                ind.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
             }
         }
+
+        window.addEventListener('resize', () => {
+            updatePiecesDOM();
+        });
 
         initBoard();
         drawBoard();
