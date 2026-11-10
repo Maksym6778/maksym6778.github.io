@@ -11,7 +11,6 @@
     <style>
         :root {
             --bg-dark: #0a0d14;
-            --board-border: #1e293b;
             --square-light: #e2e8f0;
             --square-dark: #475569;
             --square-select: #f59e0b;
@@ -129,7 +128,6 @@
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-            position: relative;
         }
 
         #board {
@@ -139,7 +137,6 @@
             border-radius: 8px;
             overflow: hidden;
             border: 2px solid #334155;
-            position: relative;
         }
 
         @media (min-width: 540px) {
@@ -187,39 +184,31 @@
             z-index: 5;
         }
 
-        /* Animated Pieces Layer */
+        /* Pure Colored Pieces with Font Awesome SVG Rendering */
         .piece {
-            position: absolute;
-            width: 52px;
-            height: 52px;
+            font-size: 2.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: transform 0.22s cubic-bezier(0.2, 0, 0.2, 1);
-            user-select: none;
             pointer-events: none;
+            z-index: 2;
+            transition: transform 0.15s ease, opacity 0.15s ease;
         }
 
         @media (min-width: 540px) {
             .piece {
-                width: 64px;
-                height: 64px;
                 font-size: 2.7rem;
             }
         }
 
-        /* Pure Colored Pieces with Font Awesome SVG Rendering */
         .piece-w {
             color: var(--piece-white);
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.4));
         }
 
         .piece-b {
             color: var(--piece-black);
-            filter: drop-shadow(0 3px 5px rgba(255,255,255,0.25));
+            filter: drop-shadow(0 2px 3px rgba(255,255,255,0.25));
         }
     </style>
 </head>
@@ -238,7 +227,6 @@
 
     <div id="board-wrapper">
         <div id="board"></div>
-        <div id="pieces-layer"></div>
     </div>
 
     <script>
@@ -252,8 +240,7 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true },
             halfmove = 0,
             history = [],
-            vsAI = false,
-            pieceElements = {};
+            vsAI = false;
 
         const faIcons = {
             [P.PAWN]: 'fa-solid fa-chess-pawn',
@@ -263,10 +250,6 @@
             [P.QUEEN]: 'fa-solid fa-chess-queen',
             [P.KING]: 'fa-solid fa-chess-king'
         };
-
-        function getSquareSize() {
-            return window.innerWidth >= 540 ? 64 : 52;
-        }
 
         function initBoard() {
             board.fill(0);
@@ -284,56 +267,6 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true };
             halfmove = 0;
             history = [board.join(',')];
-            buildPiecesDOM();
-        }
-
-        function buildPiecesDOM() {
-            const layer = document.getElementById('pieces-layer');
-            layer.innerHTML = '';
-            pieceElements = {};
-            const sqSize = getSquareSize();
-
-            for (let i = 0; i < 64; i++) {
-                if (board[i]) {
-                    const el = document.createElement('div');
-                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
-                    const iconClass = faIcons[board[i] & 7];
-                    el.className = `piece ${colorClass}`;
-                    el.innerHTML = `<i class="${iconClass}"></i>`;
-                    
-                    const r = Math.floor(i / 8);
-                    const c = i % 8;
-                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
-                    
-                    layer.appendChild(el);
-                    pieceElements[i] = el;
-                }
-            }
-        }
-
-        function updatePiecesDOM() {
-            const sqSize = getSquareSize();
-            const newPieceElements = {};
-            const layer = document.getElementById('pieces-layer');
-            layer.innerHTML = '';
-
-            for (let i = 0; i < 64; i++) {
-                if (board[i]) {
-                    const el = document.createElement('div');
-                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
-                    const iconClass = faIcons[board[i] & 7];
-                    el.className = `piece ${colorClass}`;
-                    el.innerHTML = `<i class="${iconClass}"></i>`;
-                    
-                    const r = Math.floor(i / 8);
-                    const c = i % 8;
-                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
-                    
-                    layer.appendChild(el);
-                    newPieceElements[i] = el;
-                }
-            }
-            pieceElements = newPieceElements;
         }
 
         function toggleMode() {
@@ -421,24 +354,6 @@
             return -1;
         }
 
-        function animateAndMove(from, to, callback) {
-            const sqSize = getSquareSize();
-            const el = pieceElements[from];
-            
-            if (el) {
-                const tr = Math.floor(to / 8);
-                const tc = to % 8;
-                el.style.transform = `translate3d(${tc * sqSize}px, ${tr * sqSize}px, 0)`;
-            }
-
-            setTimeout(() => {
-                makeMove(from, to);
-                updatePiecesDOM();
-                drawBoard();
-                if (callback) callback();
-            }, 230);
-        }
-
         function makeMove(from, to) {
             let pc = board[from], type = pc & 7, col = pc & 24, isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
 
@@ -517,7 +432,8 @@
             });
             allMoves.sort((a, b) => b.score - a.score);
             let bestMove = allMoves[0];
-            animateAndMove(bestMove.from, bestMove.to);
+            makeMove(bestMove.from, bestMove.to);
+            drawBoard();
         }
 
         function drawBoard() {
@@ -533,6 +449,15 @@
                 if (selectedSquare === i) sq.classList.add('selected');
                 if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
                 
+                if (board[i]) {
+                    const pieceEl = document.createElement('div');
+                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
+                    const iconClass = faIcons[board[i] & 7];
+                    pieceEl.className = `piece ${colorClass}`;
+                    pieceEl.innerHTML = `<i class="${iconClass}"></i>`;
+                    sq.appendChild(pieceEl);
+                }
+
                 if (possibleMoves.includes(i)) {
                     const dot = document.createElement('div');
                     dot.classList.add('dot');
@@ -554,9 +479,9 @@
                             const from = selectedSquare;
                             selectedSquare = null;
                             possibleMoves = [];
-                            animateAndMove(from, i, () => {
-                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
-                            });
+                            makeMove(from, i);
+                            drawBoard();
+                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
                         } else if (board[i] && (board[i] & 24) === turn) {
                             selectedSquare = i;
                             possibleMoves = getLegalMoves(i);
@@ -586,10 +511,6 @@
                 ind.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
             }
         }
-
-        window.addEventListener('resize', () => {
-            updatePiecesDOM();
-        });
 
         initBoard();
         drawBoard();
