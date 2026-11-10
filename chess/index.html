@@ -7,21 +7,15 @@
     <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- GSAP for Smooth Animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <style>
         :root {
             --bg-dark: #12100e;
-            --board-frame: #2c1d11;
-            --square-light: #eeeed2;
-            --square-dark: #769656;
-            --wood-light: #e0c097;
-            --wood-dark: #8b5a2b;
+            --wood-light: #eeeed2;
+            --wood-dark: #769656;
             --square-select: #f7ec59;
             --square-check: #ef4444;
-            --square-move-dot: rgba(20, 85, 30, 0.5);
-            --text-gold: #f59e0b;
+            --square-move-dot: rgba(20, 85, 30, 0.45);
         }
 
         * {
@@ -195,17 +189,12 @@
             position: relative;
         }
 
-        /* Wooden Texture Board Colors */
         .wood-light {
             background-color: var(--wood-light);
-            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
-            background-size: 8px 8px;
         }
 
         .wood-dark {
             background-color: var(--wood-dark);
-            background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 0);
-            background-size: 8px 8px;
         }
 
         .square.selected { background-color: var(--square-select) !important; }
@@ -220,7 +209,7 @@
             to { background-color: #991b1b; }
         }
 
-        /* Coordinates Notation (1-8, a-h) */
+        /* Coordinates (1-8, a-h) */
         .coord {
             position: absolute;
             font-size: 11px;
@@ -229,15 +218,15 @@
             user-select: none;
         }
         .coord-rank {
-            top: 3px;
+            top: 2px;
             left: 4px;
         }
         .coord-file {
             bottom: 2px;
             right: 4px;
         }
-        .wood-light .coord { color: #8b5a2b; }
-        .wood-dark .coord { color: #e0c097; }
+        .wood-light .coord { color: #769656; }
+        .wood-dark .coord { color: #eeeed2; }
 
         .dot {
             width: 18px;
@@ -249,43 +238,19 @@
             z-index: 5;
         }
 
-        /* Absolute Piece Layer */
-        #pieces-layer {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 416px;
-            height: 416px;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @media (min-width: 540px) {
-            #pieces-layer {
-                width: 512px;
-                height: 512px;
-            }
-        }
-
+        /* Chess Pieces Style */
         .piece {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 52px;
-            height: 52px;
+            font-size: 2.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.3rem;
-            user-select: none;
             pointer-events: none;
-            will-change: transform;
+            z-index: 2;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         @media (min-width: 540px) {
             .piece {
-                width: 64px;
-                height: 64px;
                 font-size: 2.8rem;
             }
         }
@@ -314,7 +279,7 @@
         <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-user-group"></i> Mode: vs Friend</button>
     </div>
 
-    <!-- Opponent Player Info -->
+    <!-- Opponent Player Bar -->
     <div class="player-bar">
         <div class="avatar"><i class="fa-solid fa-user-ninja"></i></div>
         <div class="player-name" id="opponent-name">Opponent (Black)</div>
@@ -323,10 +288,9 @@
     <!-- Wooden Chess Board -->
     <div id="board-wrapper">
         <div id="board"></div>
-        <div id="pieces-layer"></div>
     </div>
 
-    <!-- Local Player Info -->
+    <!-- Local Player Bar -->
     <div class="player-bar">
         <div class="avatar"><i class="fa-solid fa-user"></i></div>
         <div class="player-name">Player (White)</div>
@@ -343,8 +307,7 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true },
             halfmove = 0,
             history = [],
-            vsAI = false,
-            isAnimating = false;
+            vsAI = false;
 
         const faIcons = {
             [P.PAWN]: 'fa-solid fa-chess-pawn',
@@ -354,12 +317,6 @@
             [P.QUEEN]: 'fa-solid fa-chess-queen',
             [P.KING]: 'fa-solid fa-chess-king'
         };
-
-        const pieceDomMap = {};
-
-        function getSquareSize() {
-            return window.innerWidth >= 540 ? 64 : 52;
-        }
 
         function initBoard() {
             board.fill(0);
@@ -377,36 +334,9 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true };
             halfmove = 0;
             history = [board.join(',')];
-            buildPiecesDOM();
-        }
-
-        function buildPiecesDOM() {
-            const layer = document.getElementById('pieces-layer');
-            layer.innerHTML = '';
-            for (let k in pieceDomMap) delete pieceDomMap[k];
-            
-            const sqSize = getSquareSize();
-
-            for (let i = 0; i < 64; i++) {
-                if (board[i]) {
-                    const el = document.createElement('div');
-                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
-                    const iconClass = faIcons[board[i] & 7];
-                    el.className = `piece ${colorClass}`;
-                    el.innerHTML = `<i class="${iconClass}"></i>`;
-                    
-                    const r = Math.floor(i / 8);
-                    const c = i % 8;
-                    gsap.set(el, { x: c * sqSize, y: r * sqSize });
-                    
-                    layer.appendChild(el);
-                    pieceDomMap[i] = el;
-                }
-            }
         }
 
         function toggleMode() {
-            if (isAnimating) return;
             vsAI = !vsAI;
             const modeBtn = document.getElementById('mode-btn');
             const oppName = document.getElementById('opponent-name');
@@ -496,42 +426,6 @@
             return -1;
         }
 
-        function smoothMovePiece(from, to, onComplete) {
-            isAnimating = true;
-            const sqSize = getSquareSize();
-            const pieceEl = pieceDomMap[from];
-            const capturedEl = pieceDomMap[to];
-
-            const targetRow = Math.floor(to / 8);
-            const targetCol = to % 8;
-
-            if (capturedEl) {
-                gsap.to(capturedEl, { scale: 0, opacity: 0, duration: 0.18, ease: "power1.in" });
-            }
-
-            if (pieceEl) {
-                gsap.to(pieceEl, {
-                    x: targetCol * sqSize,
-                    y: targetRow * sqSize,
-                    duration: 0.25,
-                    ease: "power2.out",
-                    onComplete: () => {
-                        makeMove(from, to);
-                        buildPiecesDOM();
-                        drawBoard();
-                        isAnimating = false;
-                        if (onComplete) onComplete();
-                    }
-                });
-            } else {
-                makeMove(from, to);
-                buildPiecesDOM();
-                drawBoard();
-                isAnimating = false;
-                if (onComplete) onComplete();
-            }
-        }
-
         function makeMove(from, to) {
             let pc = board[from], type = pc & 7, col = pc & 24, isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
 
@@ -560,4 +454,156 @@
             enPassant = (type === P.PAWN && Math.abs(to - from) === 16) ? to + (col === P.W ? 8 : -8) : null;
             if (type === P.PAWN && (Math.floor(to / 8) === 0 || Math.floor(to / 8) === 7)) board[to] = P.QUEEN | col;
             halfmove = (type === P.PAWN || isCap) ? 0 : halfmove + 1;
-            turn = turn === P.W ? P.B : P
+            turn = turn === P.W ? P.B : P.W;
+            history.push(board.join(','));
+        }
+
+        function getLegalMoves(from) {
+            let raw = generateMoves(from), legal = [], col = board[from] & 24;
+            for (let to of raw) {
+                let saved = [...board], savedC = { ...castling }, savedEP = enPassant;
+                if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
+                board[to] = board[from]; board[from] = 0;
+                let kingSq = getKing(col);
+                if (kingSq !== -1 && !isAttacked(kingSq, col === P.W ? P.B : P.W)) legal.push(to);
+                board = saved; castling = savedC; enPassant = savedEP;
+            }
+            return legal;
+        }
+
+        function hasMoves(col) {
+            for (let i = 0; i < 64; i++) {
+                if ((board[i] & 24) === col && getLegalMoves(i).length > 0) return true;
+            }
+            return false;
+        }
+
+        function isDraw() {
+            if (halfmove >= 100) return "Draw: 50 moves!";
+            if (history.filter(x => x === board.join(',')).length >= 3) return "Draw: Repetition!";
+            return null;
+        }
+
+        function makeAIMove() {
+            let piecesValues = { [P.PAWN]: 10, [P.KNIGHT]: 30, [P.BISHOP]: 30, [P.ROOK]: 50, [P.QUEEN]: 90, [P.KING]: 900 };
+            let allMoves = [];
+            for (let i = 0; i < 64; i++) {
+                if (board[i] && (board[i] & P.B)) {
+                    let moves = getLegalMoves(i);
+                    for (let m of moves) allMoves.push({ from: i, to: m });
+                }
+            }
+            if (allMoves.length === 0) return;
+            allMoves.forEach(mv => {
+                let score = 0;
+                let targetPiece = board[mv.to];
+                if (targetPiece) score += piecesValues[targetPiece & 7] * 2;
+                let currentPieceType = board[mv.from] & 7;
+                if (currentPieceType === P.PAWN) score += (Math.floor(mv.to / 8));
+                mv.score = score + (Math.random() * 3);
+            });
+            allMoves.sort((a, b) => b.score - a.score);
+            let bestMove = allMoves[0];
+            makeMove(bestMove.from, bestMove.to);
+            drawBoard();
+        }
+
+        function drawBoard() {
+            const el = document.getElementById('board');
+            el.innerHTML = '';
+            let kingCheck = isAttacked(getKing(turn), turn === P.W ? P.B : P.W);
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+            for (let i = 0; i < 64; i++) {
+                const sq = document.createElement('div');
+                let r = Math.floor(i / 8), c = i % 8;
+                const isLight = (r + c) % 2 === 0;
+                sq.classList.add('square', isLight ? 'wood-light' : 'wood-dark');
+                
+                // Add Chess.com rank numbers (1-8)
+                if (c === 0) {
+                    const rankLabel = document.createElement('span');
+                    rankLabel.className = 'coord coord-rank';
+                    rankLabel.textContent = 8 - r;
+                    sq.appendChild(rankLabel);
+                }
+
+                // Add Chess.com file letters (a-h)
+                if (r === 7) {
+                    const fileLabel = document.createElement('span');
+                    fileLabel.className = 'coord coord-file';
+                    fileLabel.textContent = files[c];
+                    sq.appendChild(fileLabel);
+                }
+
+                if (selectedSquare === i) sq.classList.add('selected');
+                if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
+                
+                if (board[i]) {
+                    const pieceEl = document.createElement('div');
+                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
+                    const iconClass = faIcons[board[i] & 7];
+                    pieceEl.className = `piece ${colorClass}`;
+                    pieceEl.innerHTML = `<i class="${iconClass}"></i>`;
+                    sq.appendChild(pieceEl);
+                }
+
+                if (possibleMoves.includes(i)) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    sq.appendChild(dot);
+                }
+
+                sq.addEventListener('click', () => {
+                    if (vsAI && turn === P.B) return;
+                    if (!hasMoves(P.W) && !hasMoves(P.B)) return;
+
+                    if (selectedSquare === null) {
+                        if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        }
+                    } else {
+                        if (possibleMoves.includes(i)) {
+                            const from = selectedSquare;
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            makeMove(from, i);
+                            drawBoard();
+                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
+                        } else if (board[i] && (board[i] & 24) === turn) {
+                            selectedSquare = i;
+                            possibleMoves = getLegalMoves(i);
+                            drawBoard();
+                        } else {
+                            selectedSquare = null;
+                            possibleMoves = [];
+                            drawBoard();
+                        }
+                    }
+                });
+                el.appendChild(sq);
+            }
+
+            const ind = document.getElementById('turn-indicator');
+            let hm = hasMoves(turn), dr = isDraw();
+            if (!hm) {
+                ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
+                ind.style.backgroundColor = kingCheck ? '#15803d' : '#4b5563';
+                setTimeout(resetGame, 5000);
+            } else if (dr) {
+                ind.innerHTML = `<i class="fa-solid fa-handshake"></i> ${dr} Restart...`;
+                ind.style.backgroundColor = '#4b5563';
+                setTimeout(resetGame, 5000);
+            } else {
+                ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
+                ind.style.backgroundColor = '#251d16';
+            }
+        }
+
+        initBoard();
+        drawBoard();
+    </script>
+</body>
+</html>
