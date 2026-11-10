@@ -3,136 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games Library</title>
+    <title>BMW Premium Club</title>
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #111827;
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --border-color: #1f2937;
+        /* Здесь находятся все ваши стили из второй части */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
+            background-color: #0b0c10;
+            color: #ffffff;
         }
 
-        .container {
-            max-width: 1200px;
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background-color: rgba(11, 12, 16, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        h1 {
-            font-size: 2.5rem;
+        .navbar .logo {
+            font-size: 1.6rem;
             font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.05em;
+            letter-spacing: 1px;
         }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
+        .navbar .logo span {
+            color: #0b0c10;
+            background: #66fcf1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 5px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
+        .nav-links a {
+            color: #c5c6c7;
             text-decoration: none;
-            color: var(--text-main);
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 140px;
+            margin-left: 35px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.1);
+        .nav-links a:hover {
+            color: #66fcf1;
         }
 
-        .card-header {
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: url('bmw.png') no-repeat center center/cover;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(59, 130, 246, 0.1);
-            color: var(--accent);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            align-items: center;
+            text-align: center;
         }
 
-        .card-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin: 0;
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
         }
 
-        .card-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin: 0.5rem 0 0 0;
-            line-height: 1.4;
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 800px;
         }
 
-        .card-badge {
-            font-size: 0.75rem;
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background-color: rgba(156, 163, 175, 0.1);
-            color: var(--text-muted);
-            padding: 4px 8px;
-            border-radius: 6px;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-shadow: 2px 4px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero-content p {
+            font-size: 1.4rem;
+            color: #c5c6c7;
+            margin-bottom: 40px;
+            text-shadow: 1px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 16px 45px;
+            font-size: 1rem;
             font-weight: 600;
+            color: #0b0c10;
+            background-color: #66fcf1;
+            text-decoration: none;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 252, 241, 0.3);
+        }
+
+        .hero-btn:hover {
+            background-color: #45a29e;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 252, 241, 0.5);
+        }
+
+        .content-section {
+            padding: 100px 8%;
+            text-align: center;
+        }
+
+        .content-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .content-section h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: #66fcf1;
+            margin: 15px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .about-card {
+            background-color: #1f2833;
+            padding: 40px 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            border-color: #66fcf1;
+        }
+
+        .about-card h3 {
+            font-size: 1.5rem;
+            color: #66fcf1;
+            margin-bottom: 15px;
+        }
+
+        .about-card p {
+            color: #c5c6c7;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background-color: #0b0c10;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #45a29e;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 5%; }
+            .nav-links { display: none; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Games</h1>
-    <p class="subtitle">Play interactive browser games built for the modern experience.</p>
+    <header class="navbar">
+        <div class="logo">BMW <span>CLUB</span></div>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contacts">Contact</a>
+        </nav>
+    </header>
 
-    <div class="grid">
-        <!-- Chess Card -->
-        <a href="/chess/index.html" class="card">
-            <div>
-                <div class="card-header">
-                    <div class="card-icon">♞</div>
-                    <span class="card-badge">Strategy</span>
-                </div>
-                <h3 class="card-title">Chess</h3>
-                <p class="card-desc">Classic chess game. Test your tactical skills against the AI or your friends.</p>
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <h1>Feel the Drive</h1>
+            <p>Control style, power, and pure emotion in every turn</p>
+            <a href="#about" class="hero-btn">Discover More</a>
+        </div>
+    </section>
+
+    <section id="about" class="content-section">
+        <h2>Excellence in Details</h2>
+        <div class="about-grid">
+            <div class="about-card">
+                <h3>Dynamics</h3>
+                <p>Perfect weight distribution and responsive handling designed for speed enthusiasts.</p>
             </div>
-        </a>
-    </div>
-</div>
+            <div class="about-card">
+                <h3>Comfort</h3>
+                <p>Premium interior materials and cutting-edge technology inside the cabin.</p>
+            </div>
+            <div class="about-card">
+                <h3>Aesthetics</h3>
+                <p>Aggressive body lines capturing attention on every single road.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacts" class="footer">
+        <p>&copy; 2026 BMW Club. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>
