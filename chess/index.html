@@ -1,85 +1,150 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Премиум Шахматы PRO</title>
+    <title>Chess Premium PRO - ArcadeHub</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --bg-dark: #0a0d14;
+            --card-bg: rgba(18, 24, 38, 0.9);
+            --accent-blue: #38bdf8;
+            --accent-purple: #8b5cf6;
+            --square-light: #e2e8f0;
+            --square-dark: #475569;
+            --square-select: #f59e0b;
+            --square-check: #ef4444;
+            --square-move: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: radial-gradient(circle, #1e272e 0%, #0f141c 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             color: #ffffff;
-            overflow: hidden;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 520px;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
         }
 
         h1 {
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #38bdf8, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
             align-items: center;
+            width: 100%;
+            max-width: 520px;
+            justify-content: center;
         }
 
         #turn-indicator {
-            font-size: 1.1rem;
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
+            font-size: 0.95rem;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
         }
 
         #mode-btn {
-            padding: 10px 20px;
-            background: #3498db;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--accent-purple), #6366f1);
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         #mode-btn:hover {
-            background: #2980b9;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Chess Board Layout */
+        #board-wrapper {
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
         }
 
         #board {
             display: grid;
-            grid-template-columns: repeat(8, 45px);
-            grid-template-rows: repeat(8, 45px);
-            border: 5px solid #2c3e50;
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            grid-template-columns: repeat(8, 48px);
+            grid-template-rows: repeat(8, 48px);
+            border-radius: 8px;
             overflow: hidden;
+            border: 2px solid #334155;
         }
 
-        @media(min-width: 500px) {
+        @media (min-width: 520px) {
             #board {
-                grid-template-columns: repeat(8, 60px);
-                grid-template-rows: repeat(8, 60px);
-            }
-
-            .square {
-                font-size: 44px !important;
+                grid-template-columns: repeat(8, 62px);
+                grid-template-rows: repeat(8, 62px);
             }
         }
 
@@ -89,61 +154,86 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 2.2rem;
             cursor: pointer;
             user-select: none;
             position: relative;
             transition: background-color 0.15s ease;
         }
 
+        @media (min-width: 520px) {
+            .square {
+                font-size: 2.8rem;
+            }
+        }
+
         .light {
-            background-color: #eaeaea;
+            background-color: var(--square-light);
         }
 
         .dark {
-            background-color: #4b6584;
+            background-color: var(--square-dark);
         }
 
         .square.selected {
-            background-color: #f1c40f !important;
+            background-color: var(--square-select) !important;
         }
 
         .square.in-check {
-            background-color: #e74c3c !important;
+            background-color: var(--square-check) !important;
+            animation: pulse-red 1.2s infinite alternate;
+        }
+
+        @keyframes pulse-red {
+            from { background-color: #ef4444; }
+            to { background-color: #991b1b; }
         }
 
         .dot {
-            width: 14px;
-            height: 14px;
-            background-color: rgba(46, 204, 113, 0.7);
+            width: 16px;
+            height: 16px;
+            background-color: rgba(16, 185, 129, 0.85);
             border-radius: 50%;
             position: absolute;
             pointer-events: none;
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.9);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
         }
 
-        /* Элитный контрастный стиль для фигур */
-        .w {
+        /* Distinct Piece Styles (Crisp Black & Crisp White) */
+        .piece-w {
             color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 2px #000000;
-            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+            text-shadow: 
+                0 0 2px #000, 
+                1px 1px 3px rgba(0, 0, 0, 0.8),
+                -1px -1px 3px rgba(0, 0, 0, 0.8);
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
         }
 
-        .b {
-            color: #111116;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6), 0 0 1px #ffffff;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+        .piece-b {
+            color: #0f172a;
+            text-shadow: 
+                0 0 2px #fff,
+                1px 1px 2px rgba(255, 255, 255, 0.5);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
     </style>
 </head>
 
 <body>
-    <h1>Chess Premium Pro</h1>
-    <div class="controls">
-        <div id="turn-indicator">Ход: Белые</div>
-        <button id="mode-btn" onclick="toggleMode()">Режим: с Другом</button>
+
+    <div class="header-bar">
+        <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        <h1>Chess PRO</h1>
     </div>
-    <div id="board"></div>
+
+    <div class="controls">
+        <div id="turn-indicator"><i class="fa-solid fa-chess-king"></i> Turn: White</div>
+        <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-robot"></i> Mode: vs Friend</button>
+    </div>
+
+    <div id="board-wrapper">
+        <div id="board"></div>
+    </div>
 
     <script>
         const P = {
@@ -157,11 +247,13 @@
             W: 8,
             B: 16
         };
+
         let board = Array(64).fill(0),
             turn = P.W,
             selectedSquare = null,
             possibleMoves = [],
             enPassant = null;
+
         let castling = {
                 wK: true,
                 wQ: true,
@@ -171,6 +263,7 @@
             halfmove = 0,
             history = [],
             vsAI = false;
+
         const symbols = {
             [P.PAWN]: '♟',
             [P.ROOK]: '♜',
@@ -205,7 +298,10 @@
 
         function toggleMode() {
             vsAI = !vsAI;
-            document.getElementById('mode-btn').textContent = vsAI ? "Режим: с Ботом" : "Режим: с Другом";
+            const modeBtn = document.getElementById('mode-btn');
+            modeBtn.innerHTML = vsAI 
+                ? '<i class="fa-solid fa-robot"></i> Mode: vs Bot' 
+                : '<i class="fa-solid fa-user-group"></i> Mode: vs Friend';
             resetGame();
         }
 
@@ -223,6 +319,7 @@
                 enemy = col === P.W ? P.B : P.W,
                 r = Math.floor(from / 8),
                 c = from % 8;
+
             if (type === P.PAWN) {
                 let dir = col === P.W ? -1 : 1,
                     start = col === P.W ? 6 : 1,
@@ -298,6 +395,7 @@
                 type = pc & 7,
                 col = pc & 24,
                 isCap = board[to] !== 0 || (type === P.PAWN && to === enPassant);
+
             if (type === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
             if (type === P.KING) {
                 if (from === 60 && to === 62) {
@@ -329,6 +427,7 @@
             if (to === 63) castling.wK = false;
             if (to === 0) castling.bQ = false;
             if (to === 7) castling.bK = false;
+
             board[to] = pc;
             board[from] = 0;
             enPassant = (type === P.PAWN && Math.abs(to - from) === 16) ? to + (col === P.W ? 8 : -8) : null;
@@ -344,9 +443,7 @@
                 col = board[from] & 24;
             for (let to of raw) {
                 let saved = [...board],
-                    savedC = {
-                        ...castling
-                    },
+                    savedC = { ...castling },
                     savedEP = enPassant;
                 if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
                 board[to] = board[from];
@@ -368,12 +465,12 @@
         }
 
         function isDraw() {
-            if (halfmove >= 100) return "Ничья: 50 ходов!";
-            if (history.filter(x => x === board.join(',')).length >= 3) return "Ничья: повторение!";
+            if (halfmove >= 100) return "Draw: 50 moves!";
+            if (history.filter(x => x === board.join(',')).length >= 3) return "Draw: Repetition!";
             return null;
         }
 
-        /* Искусственный Интеллект бота (Оценка позиции материалом) */
+        /* Bot AI Movement logic */
         function makeAIMove() {
             let piecesValues = {
                 [P.PAWN]: 10,
@@ -419,7 +516,7 @@
                 sq.classList.add('square', (r + c) % 2 === 0 ? 'light' : 'dark');
                 if (board[i]) {
                     sq.textContent = symbols[board[i] & 7];
-                    sq.classList.add((board[i] & P.W) ? 'w' : 'b');
+                    sq.classList.add((board[i] & P.W) ? 'piece-w' : 'piece-b');
                 }
                 if (selectedSquare === i) sq.classList.add('selected');
                 if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
@@ -461,16 +558,16 @@
             let hm = hasMoves(turn),
                 dr = isDraw();
             if (!hm) {
-                ind.textContent = kingCheck ? `Мат! Перезапуск через 5с...` : 'Ничья: Пат! Перезапуск...';
-                ind.style.backgroundColor = kingCheck ? '#27ae60' : '#7f8c8d';
+                ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
+                ind.style.backgroundColor = kingCheck ? '#10b981' : '#64748b';
                 setTimeout(resetGame, 5000);
             } else if (dr) {
-                ind.textContent = dr + " Перезапуск...";
-                ind.style.backgroundColor = '#7f8c8d';
+                ind.innerHTML = `<i class="fa-solid fa-handshake"></i> ${dr} Restart...`;
+                ind.style.backgroundColor = '#64748b';
                 setTimeout(resetGame, 5000);
             } else {
-                ind.textContent = `Ход: ${turn===P.W?'Белые':'Черные'}${kingCheck?' (ШАХ!)':''}`;
-                ind.style.backgroundColor = '#34495e';
+                ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
+                ind.style.backgroundColor = 'rgba(15, 23, 42, 0.8)';
             }
         }
 
@@ -478,5 +575,4 @@
         drawBoard();
     </script>
 </body>
-
 </html>
