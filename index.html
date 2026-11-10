@@ -6,14 +6,20 @@
     <title>Maksym's Apps</title>
     <style>
         :root {
-            --primary: #0078D7;
-            --primary-hover: #005a9e;
+            --primary: #81b64c;
+            --primary-hover: #a3d169;
             --bg-dark: #121212;
             --card-bg: #1e1e1e;
             --text-light: #f5f5f5;
             --text-muted: #aaa;
-            --sidebar-bg: #181818;
             --border: #333;
+            
+            /* Chess Colors */
+            --board-light: #ebecd0;
+            --board-dark: #739552;
+            --select-color: #bbcb2b;
+            --highlight: rgba(255, 255, 0, 0.4);
+            --panel-bg: #262421;
         }
 
         * {
@@ -31,7 +37,7 @@
             min-height: 100vh;
         }
 
-        /* Navigation Header */
+        /* Header Navigation */
         header {
             background-color: #1a1a1a;
             border-bottom: 1px solid var(--border);
@@ -47,7 +53,7 @@
         .brand {
             font-size: 24px;
             font-weight: bold;
-            color: var(--primary);
+            color: #0078D7;
             letter-spacing: 0.5px;
         }
 
@@ -68,12 +74,12 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background-color: var(--primary);
-            border-color: var(--primary);
+            background-color: #0078D7;
+            border-color: #0078D7;
             color: #fff;
         }
 
-        /* Search Section */
+        /* Search & Home Layout */
         .search-container {
             padding: 30px;
             max-width: 1200px;
@@ -94,10 +100,9 @@
         }
 
         .search-box:focus {
-            border-color: var(--primary);
+            border-color: #0078D7;
         }
 
-        /* App Sections */
         .main-content {
             flex: 1;
             max-width: 1200px;
@@ -150,7 +155,7 @@
         }
 
         .btn-launch {
-            background-color: var(--primary);
+            background-color: #0078D7;
             color: #fff;
             border: none;
             padding: 10px;
@@ -162,25 +167,159 @@
         }
 
         .btn-launch:hover {
-            background-color: var(--primary-hover);
+            background-color: #005a9e;
         }
 
-        /* Embedded App Viewers */
+        /* App View Container */
         .app-view {
             display: none;
             width: 100%;
-            height: calc(100vh - 150px);
-            background: #fff;
-            color: #000;
-            border-radius: 8px;
-            overflow: hidden;
+            min-height: calc(100vh - 150px);
+            background: #121212;
         }
 
         .app-view.active-view {
             display: flex;
+            justify-content: center;
         }
 
-        /* Footer */
+        /* --- CHESS GAME STYLES --- */
+        .chess-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 1100px;
+            width: 100%;
+            padding: 0 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .board-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-info {
+            width: 100%;
+            max-width: 560px;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .captured-pieces {
+            font-size: 18px;
+            letter-spacing: 2px;
+            min-height: 24px;
+        }
+
+        .board {
+            width: 560px;
+            height: 560px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            user-select: none;
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .square.light { background-color: var(--board-light); color: #000; }
+        .square.dark { background-color: var(--board-dark); color: #000; }
+        .square.selected { background-color: var(--select-color) !important; }
+        .square.last-move { background-color: var(--highlight) !important; }
+
+        .chess-panel {
+            width: 320px;
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            height: 600px;
+        }
+
+        .mode-select {
+            width: 100%;
+            padding: 10px;
+            background: #1a1917;
+            color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .status-box {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            padding: 12px;
+            background-color: #1a1917;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .move-history {
+            flex: 1;
+            background-color: #1a1917;
+            border-radius: 6px;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 6px;
+        }
+
+        .history-row:nth-child(even) { background-color: #22201d; }
+
+        .chess-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-chess {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-chess:hover { background-color: var(--primary-hover); }
+        .btn-chess-sec { background-color: #403d39; }
+        .btn-chess-sec:hover { background-color: #524f4a; }
+
         footer {
             background-color: #1a1a1a;
             border-top: 1px solid var(--border);
@@ -188,6 +327,14 @@
             padding: 20px;
             font-size: 14px;
             color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        @media (max-width: 900px) {
+            .chess-container { flex-direction: column; align-items: center; }
+            .board { width: 90vw; height: 90vw; }
+            .square { font-size: 10vw; }
+            .chess-panel { width: 90vw; height: auto; }
         }
     </style>
 </head>
@@ -196,9 +343,9 @@
     <header>
         <div class="brand">Maksym's Apps</div>
         <nav>
-            <button class="nav-link active" onclick="switchView('home')">Home</button>
-            <button class="nav-link" onclick="switchView('bible')">Bible App</button>
-            <button class="nav-link" onclick="switchView('chess')">Chess Game</button>
+            <button class="nav-link active" onclick="switchView('home', this)">Home</button>
+            <button class="nav-link" onclick="switchView('bible', this)">Bible App</button>
+            <button class="nav-link" onclick="switchView('chess', this)">Chess Game</button>
         </nav>
     </header>
 
@@ -217,15 +364,15 @@
                         <div class="card-title">Bible App</div>
                         <div class="card-description">Read, search, and study scripture with a clean interactive text viewer.</div>
                     </div>
-                    <button class="btn-launch" onclick="switchView('bible')">Open App</button>
+                    <button class="btn-launch" onclick="switchView('bible', document.querySelectorAll('.nav-link')[1])">Open App</button>
                 </div>
 
                 <div class="card" data-name="chess game strategy board">
                     <div>
                         <div class="card-title">Chess Game</div>
-                        <div class="card-description">Play a interactive 2D chess game right from your browser.</div>
+                        <div class="card-description">Play an interactive 2D chess game vs Bot or a Friend right from your browser.</div>
                     </div>
-                    <button class="btn-launch" onclick="switchView('chess')">Play Game</button>
+                    <button class="btn-launch" onclick="switchView('chess', document.querySelectorAll('.nav-link')[2])">Play Game</button>
                 </div>
 
                 <div class="card" data-name="arcade hub games list">
@@ -242,14 +389,48 @@
 
     <!-- Embedded View: Bible App -->
     <div id="view-bible" class="app-view">
-        <iframe src="Bible%20App.html" style="width: 100%; height: 100%; border: none;"></iframe>
+        <iframe src="Bible%20App.html" style="width: 100%; height: 100%; border: none; min-height: 80vh;"></iframe>
     </div>
 
-    <!-- Embedded View: Chess Game -->
+    <!-- Embedded View: Professional Chess Game -->
     <div id="view-chess" class="app-view">
-        <div style="padding: 40px; text-align: center; width: 100%; background: #222; color: #fff;">
-            <h2>Chess Game</h2>
-            <p style="margin-top: 10px; color: #aaa;">The chess module will render here.</p>
+        <div class="chess-container">
+            
+            <div class="board-wrapper">
+                <div class="player-info">
+                    <span id="blackPlayerName">Opponent (Black)</span>
+                    <div class="captured-pieces" id="blackCaptured"></div>
+                </div>
+                
+                <div class="board" id="board"></div>
+
+                <div class="player-info">
+                    <span>You (White)</span>
+                    <div class="captured-pieces" id="whiteCaptured"></div>
+                </div>
+            </div>
+
+            <div class="chess-panel">
+                <h3 style="border-bottom: 1px solid #403d39; padding-bottom: 8px;">Chess Engine</h3>
+                
+                <label style="font-size: 13px; color: var(--text-muted);">Game Mode:</label>
+                <select id="gameMode" class="mode-select" onchange="changeMode()">
+                    <option value="bot-easy">vs Bot (Easy)</option>
+                    <option value="bot-hard">vs Bot (Medium)</option>
+                    <option value="pvp">vs Partner (2 Players)</option>
+                </select>
+
+                <div class="status-box" id="status">Turn: White</div>
+
+                <div class="move-history" id="history"></div>
+
+                <div class="chess-controls">
+                    <button class="btn-chess btn-chess-sec" onclick="undoMove()">Undo</button>
+                    <button class="btn-chess btn-chess-sec" onclick="flipBoard()">Flip</button>
+                    <button class="btn-chess" onclick="resetGame()">New Game</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -258,41 +439,229 @@
     </footer>
 
     <script>
-        function switchView(viewName) {
-            // Hide all views
+        // --- NAVIGATION ENGINE ---
+        function switchView(viewName, btnEl) {
             document.getElementById('view-home').style.display = 'none';
             document.getElementById('view-bible').classList.remove('active-view');
             document.getElementById('view-chess').classList.remove('active-view');
 
-            // Deactivate all nav buttons
             document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
 
-            // Show selected view
             if (viewName === 'home') {
                 document.getElementById('view-home').style.display = 'block';
-                event.target.classList.add('active');
             } else if (viewName === 'bible') {
                 document.getElementById('view-bible').classList.add('active-view');
-                document.querySelectorAll('.nav-link')[1].classList.add('active');
             } else if (viewName === 'chess') {
                 document.getElementById('view-chess').classList.add('active-view');
-                document.querySelectorAll('.nav-link')[2].classList.add('active');
             }
+            if(btnEl) btnEl.classList.add('active');
         }
 
         function filterContent() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.querySelectorAll('.card');
-
             cards.forEach(card => {
                 const name = card.getAttribute('data-name');
-                if (name.includes(query)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = name.includes(query) ? 'flex' : 'none';
             });
         }
+
+        // --- CHESS ENGINE (Pro Chess.com Style) ---
+        const pieceSymbols = {
+            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+        };
+
+        const initialBoard = [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
+        ];
+
+        let boardState = [];
+        let turn = 'W';
+        let selected = null;
+        let moveHistory = [];
+        let capturedWhite = [];
+        let capturedBlack = [];
+        let isFlipped = false;
+        let gameMode = 'bot-easy';
+
+        function initGame() {
+            boardState = JSON.parse(JSON.stringify(initialBoard));
+            turn = 'W';
+            selected = null;
+            moveHistory = [];
+            capturedWhite = [];
+            capturedBlack = [];
+            renderBoard();
+            updateStatus();
+        }
+
+        function isWhite(piece) { return piece && piece === piece.toUpperCase(); }
+        function isBlack(piece) { return piece && piece === piece.toLowerCase(); }
+
+        function renderBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const row = isFlipped ? 7 - r : r;
+                    const col = isFlipped ? 7 - c : c;
+                    const piece = boardState[row][col];
+
+                    const square = document.createElement('div');
+                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.textContent = pieceSymbols[piece] || '';
+
+                    if (selected && selected.r === row && selected.c === col) {
+                        square.classList.add('selected');
+                    }
+
+                    square.onclick = () => handleSquareClick(row, col);
+                    boardEl.appendChild(square);
+                }
+            }
+
+            document.getElementById('whiteCaptured').textContent = capturedWhite.map(p => pieceSymbols[p]).join('');
+            document.getElementById('blackCaptured').textContent = capturedBlack.map(p => pieceSymbols[p]).join('');
+            renderHistory();
+        }
+
+        function handleSquareClick(r, c) {
+            if (gameMode.startsWith('bot') && turn === 'B') return;
+
+            const piece = boardState[r][c];
+
+            if (selected) {
+                if (selected.r === r && selected.c === c) {
+                    selected = null;
+                } else if ((turn === 'W' && isWhite(piece)) || (turn === 'B' && isBlack(piece))) {
+                    selected = { r, c };
+                } else {
+                    executeMove(selected.r, selected.c, r, c);
+                    selected = null;
+                }
+            } else {
+                if ((turn === 'W' && isWhite(piece)) || (turn === 'B' && isBlack(piece))) {
+                    selected = { r, c };
+                }
+            }
+            renderBoard();
+        }
+
+        function executeMove(fromR, fromC, toR, toC) {
+            const movingPiece = boardState[fromR][fromC];
+            const targetPiece = boardState[toR][toC];
+
+            if (targetPiece) {
+                if (isWhite(targetPiece)) capturedBlack.push(targetPiece);
+                else capturedWhite.push(targetPiece);
+            }
+
+            boardState[toR][toC] = movingPiece;
+            boardState[fromR][fromC] = '';
+
+            const colNames = ['a','b','c','d','e','f','g','h'];
+            const moveNotation = `${pieceSymbols[movingPiece]}${colNames[fromC]}${8-fromR}→${colNames[toC]}${8-toR}`;
+            
+            moveHistory.push({ notation: moveNotation, board: JSON.parse(JSON.stringify(boardState)) });
+
+            turn = turn === 'W' ? 'B' : 'W';
+            updateStatus();
+
+            if (gameMode.startsWith('bot') && turn === 'B') {
+                setTimeout(makeBotMove, 400);
+            }
+        }
+
+        function makeBotMove() {
+            let possibleMoves = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (isBlack(boardState[r][c])) {
+                        for (let tr = 0; tr < 8; tr++) {
+                            for (let tc = 0; tc < 8; tc++) {
+                                if (!isBlack(boardState[tr][tc])) {
+                                    possibleMoves.push({ fromR: r, fromC: c, toR: tr, toC: tc, target: boardState[tr][tc] });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (possibleMoves.length > 0) {
+                let move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                if (gameMode === 'bot-hard') {
+                    const captures = possibleMoves.filter(m => m.target !== '');
+                    if (captures.length > 0) move = captures[Math.floor(Math.random() * captures.length)];
+                }
+                executeMove(move.fromR, move.fromC, move.toR, move.toC);
+                renderBoard();
+            }
+        }
+
+        function updateStatus() {
+            document.getElementById('status').textContent = `Turn: ${turn === 'W' ? 'White' : 'Black'}`;
+        }
+
+        function renderHistory() {
+            const historyEl = document.getElementById('history');
+            historyEl.innerHTML = '';
+            for (let i = 0; i < moveHistory.length; i += 2) {
+                const row = document.createElement('div');
+                row.className = 'history-row';
+                const moveNum = Math.floor(i / 2) + 1;
+                const wMove = moveHistory[i] ? moveHistory[i].notation : '';
+                const bMove = moveHistory[i + 1] ? moveHistory[i + 1].notation : '';
+                row.textContent = `${moveNum}. ${wMove}  ${bMove}`;
+                historyEl.appendChild(row);
+            }
+            historyEl.scrollTop = historyEl.scrollHeight;
+        }
+
+        function changeMode() {
+            gameMode = document.getElementById('gameMode').value;
+            document.getElementById('blackPlayerName').textContent = gameMode === 'pvp' ? 'Player 2 (Black)' : 'Bot (Black)';
+            initGame();
+        }
+
+        function undoMove() {
+            if (moveHistory.length === 0) return;
+            let steps = gameMode.startsWith('bot') ? 2 : 1;
+            while (steps > 0 && moveHistory.length > 0) {
+                moveHistory.pop();
+                steps--;
+                turn = turn === 'W' ? 'B' : 'W';
+            }
+            if (moveHistory.length > 0) {
+                boardState = JSON.parse(JSON.stringify(moveHistory[moveHistory.length - 1].board));
+            } else {
+                boardState = JSON.parse(JSON.stringify(initialBoard));
+            }
+            selected = null;
+            updateStatus();
+            renderBoard();
+        }
+
+        function flipBoard() {
+            isFlipped = !isFlipped;
+            renderBoard();
+        }
+
+        function resetGame() {
+            initGame();
+        }
+
+        // Initialize game on load
+        initGame();
     </script>
 </body>
 </html>
