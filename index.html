@@ -1,489 +1,298 @@
-Here is your completed **`index.html`** file.
-
-This file includes the **Bible App layout, navigation, and search**, as well as the **chess game section**.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeHub - Bible App & Games</title>
+    <title>Maksym's Apps</title>
     <style>
         :root {
             --primary: #0078D7;
-            --bg: #FAFAFA;
-            --text: #333;
-            --sidebar-bg: #EEEEEE;
+            --primary-hover: #005a9e;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-light: #f5f5f5;
+            --text-muted: #aaa;
+            --sidebar-bg: #181818;
+            --border: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             display: flex;
-            height: 100vh;
-            background: var(--bg);
-            color: var(--text);
-            overflow: hidden;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* Top Bar Navigation */
-        #top-nav {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: #222;
-            color: white;
+        /* Navigation Header */
+        header {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            gap: 15px;
+            position: sticky;
+            top: 0;
             z-index: 100;
         }
 
-        #top-nav h2 {
-            margin: 0;
-            font-size: 18px;
-            margin-right: 20px;
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            letter-spacing: 0.5px;
         }
 
-        .top-btn {
-            background: #444;
-            color: white;
-            border: none;
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-light);
             padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            transition: all 0.2s ease;
         }
 
-        .top-btn:hover { background: #555; }
-        .top-btn.active-tab { background: var(--primary); }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
 
-        /* Main Container below navbar */
-        #app-container {
-            display: flex;
+        /* Search Section */
+        .search-container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
-            height: calc(100vh - 50px);
-            margin-top: 50px;
         }
 
-        /* Bible Layout Elements */
-        #sidebar {
-            width: 250px;
-            background: var(--sidebar-bg);
-            overflow-y: auto;
-            border-right: 1px solid #ccc;
-            display: flex;
-            flex-direction: column;
+        .search-box {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: #222;
+            color: var(--text-light);
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        #main {
+        .search-box:focus {
+            border-color: var(--primary);
+        }
+
+        /* App Sections */
+        .main-content {
             flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 30px 40px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .btn-launch {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-launch:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Embedded App Viewers */
+        .app-view {
+            display: none;
+            width: 100%;
+            height: calc(100vh - 150px);
+            background: #fff;
+            color: #000;
+            border-radius: 8px;
             overflow: hidden;
         }
 
-        /* Search Header */
-        #header {
-            padding: 15px;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .app-view.active-view {
             display: flex;
-            gap: 10px;
-            z-index: 10;
         }
 
-        #search-input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button.search-btn {
-            padding: 10px 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button.search-btn:hover { background: #005a9e; }
-
-        /* Navigation styling */
-        .sidebar-title {
-            padding: 15px;
-            margin: 0;
-            background: #ddd;
-            font-size: 18px;
-        }
-
-        #books-list {
-            padding: 10px;
-        }
-
-        #chapters-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            background: #eef;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ccc;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        .nav-btn {
-            display: block;
-            width: 100%;
-            text-align: left;
-            padding: 10px;
-            margin-bottom: 2px;
-            background: none;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .chap-btn {
-            width: auto;
-            padding: 5px 10px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .nav-btn:hover, .chap-btn:hover { background: #d0d0d0; }
-        .active-btn { font-weight: bold; background: var(--primary) !important; color: white; }
-
-        /* Reading Area */
-        #content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .reading-container {
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.8;
-            font-size: 20px;
-            font-family: 'Cambria', 'Georgia', serif;
-        }
-
-        .verse {
-            margin-bottom: 12px;
-        }
-
-        .verse-num {
-            font-size: 0.75em;
-            font-weight: bold;
-            color: var(--primary);
-            margin-right: 8px;
-            vertical-align: super;
-        }
-
-        mark {
-            background-color: #ffd700;
-            padding: 2px;
-            border-radius: 3px;
-        }
-
-        /* Chess Section Styling */
-        #chess-section {
-            display: none;
-            flex: 1;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #2b2b2b;
-            color: white;
+        /* Footer */
+        footer {
+            background-color: #1a1a1a;
+            border-top: 1px solid var(--border);
+            text-align: center;
             padding: 20px;
-            overflow-y: auto;
-        }
-
-        .chess-board {
-            display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
-            border: 4px solid #444;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .square {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .square.white { background-color: #f0d9b5; color: #000; }
-        .square.black { background-color: #b58863; color: #000; }
-        .square.selected { background-color: #7b61ff !important; }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            #app-container { flex-direction: column; }
-            #sidebar { width: 100%; height: 150px; border-right: none; border-bottom: 1px solid #ccc; }
-            .square { width: 40px; height: 40px; font-size: 26px; }
-            .chess-board { grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
+            font-size: 14px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
-    <div id="top-nav">
-        <h2>Maksym6778 Site</h2>
-        <button class="top-btn active-tab" id="btn-bible" onclick="showSection('bible')">Bible App</button>
-        <button class="top-btn" id="btn-chess" onclick="showSection('chess')">Chess Game</button>
-    </div>
+    <header>
+        <div class="brand">Maksym's Apps</div>
+        <nav>
+            <button class="nav-link active" onclick="switchView('home')">Home</button>
+            <button class="nav-link" onclick="switchView('bible')">Bible App</button>
+            <button class="nav-link" onclick="switchView('chess')">Chess Game</button>
+        </nav>
+    </header>
 
-    <!-- Main Container -->
-    <div id="app-container">
-
-        <!-- BIBLE APP SECTION -->
-        <div id="sidebar">
-            <h3 class="sidebar-title">Books</h3>
-            <div id="books-list"></div>
+    <!-- Home View -->
+    <div id="view-home">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search apps, games, and tools..." onkeyup="filterContent()">
         </div>
 
-        <div id="main">
-            <div id="header">
-                <input type="text" id="search-input" placeholder="Search scripture...">
-                <button class="search-btn" onclick="app.search()">Search</button>
-            </div>
-            
-            <div id="chapters-list"></div>
-
-            <div id="content">
-                <div class="reading-container" id="verses">
-                    <p>Select a book and chapter to begin reading.</p>
+        <main class="main-content">
+            <h2 class="section-title">Featured Applications</h2>
+            <div class="grid" id="appsGrid">
+                
+                <div class="card" data-name="bible app scripture reader">
+                    <div>
+                        <div class="card-title">Bible App</div>
+                        <div class="card-description">Read, search, and study scripture with a clean interactive text viewer.</div>
+                    </div>
+                    <button class="btn-launch" onclick="switchView('bible')">Open App</button>
                 </div>
+
+                <div class="card" data-name="chess game strategy board">
+                    <div>
+                        <div class="card-title">Chess Game</div>
+                        <div class="card-description">Play a interactive 2D chess game right from your browser.</div>
+                    </div>
+                    <button class="btn-launch" onclick="switchView('chess')">Play Game</button>
+                </div>
+
+                <div class="card" data-name="arcade hub games list">
+                    <div>
+                        <div class="card-title">ArcadeHub</div>
+                        <div class="card-description">Access your personal arcade collection of custom web applications.</div>
+                    </div>
+                    <button class="btn-launch" onclick="alert('Launching ArcadeHub...')">Launch</button>
+                </div>
+
             </div>
-        </div>
-
-        <!-- CHESS GAME SECTION -->
-        <div id="chess-section">
-            <h2>Chess Game</h2>
-            <div class="chess-board" id="chessboard"></div>
-            <p id="chess-status" style="margin-top: 15px; font-size: 18px;">Click a piece to select, then click a square to move.</p>
-        </div>
-
+        </main>
     </div>
+
+    <!-- Embedded View: Bible App -->
+    <div id="view-bible" class="app-view">
+        <iframe src="Bible%20App.html" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
+    <!-- Embedded View: Chess Game -->
+    <div id="view-chess" class="app-view">
+        <div style="padding: 40px; text-align: center; width: 100%; background: #222; color: #fff;">
+            <h2>Chess Game</h2>
+            <p style="margin-top: 10px; color: #aaa;">The chess module will render here.</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Maksym's Apps. All rights reserved.
+    </footer>
 
     <script>
-        // --- SECTION SWITCHING ---
-        function showSection(section) {
-            var bibleSidebar = document.getElementById('sidebar');
-            var bibleMain = document.getElementById('main');
-            var chessSection = document.getElementById('chess-section');
-            var btnBible = document.getElementById('btn-bible');
-            var btnChess = document.getElementById('btn-chess');
+        function switchView(viewName) {
+            // Hide all views
+            document.getElementById('view-home').style.display = 'none';
+            document.getElementById('view-bible').classList.remove('active-view');
+            document.getElementById('view-chess').classList.remove('active-view');
 
-            if (section === 'bible') {
-                bibleSidebar.style.display = 'flex';
-                bibleMain.style.display = 'flex';
-                chessSection.style.display = 'none';
-                btnBible.classList.add('active-tab');
-                btnChess.classList.remove('active-tab');
-            } else {
-                bibleSidebar.style.display = 'none';
-                bibleMain.style.display = 'none';
-                chessSection.style.display = 'flex';
-                btnChess.classList.add('active-tab');
-                btnBible.classList.remove('active-tab');
+            // Deactivate all nav buttons
+            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+
+            // Show selected view
+            if (viewName === 'home') {
+                document.getElementById('view-home').style.display = 'block';
+                event.target.classList.add('active');
+            } else if (viewName === 'bible') {
+                document.getElementById('view-bible').classList.add('active-view');
+                document.querySelectorAll('.nav-link')[1].classList.add('active');
+            } else if (viewName === 'chess') {
+                document.getElementById('view-chess').classList.add('active-view');
+                document.querySelectorAll('.nav-link')[2].classList.add('active');
             }
         }
 
-        // --- BIBLE APP LOGIC ---
-        var Bible = [];
-        var bookNames = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation"];
-        var ch = [50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 10, 42, 150, 31, 12, 8, 66, 52, 5, 48, 12, 14, 3, 9, 1, 4, 7, 3, 3, 3, 2, 14, 4, 28, 16, 24, 21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22]; 
+        function filterContent() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
 
-        for (var a = 1; a <= 66; a++) {
-            Bible[a] = [];
-            for (var b = 1; b <= ch[a - 1]; b++) {
-                Bible[a][b] = [];
-            }
-        }
-
-        // Sample Bible Verses (Genesis 1:1-5)
-        Bible[1][1][1] = "In the beginning God created the heaven and the earth.";
-        Bible[1][1][2] = "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.";
-        Bible[1][1][3] = "And God said, Let there be light: and there was light.";
-        Bible[1][1][4] = "And God saw the light, that it was good: and God divided the light from the darkness.";
-        Bible[1][1][5] = "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.";
-
-        var currentBook = 1;
-        var currentChapter = 1;
-
-        var app = {
-            init: function() {
-                this.renderBooks();
-                this.selectBook(1);
-            },
-            renderBooks: function() {
-                var booksContainer = document.getElementById('books-list');
-                booksContainer.innerHTML = '';
-                bookNames.forEach(function(name, index) {
-                    var btn = document.createElement('button');
-                    btn.className = 'nav-btn';
-                    btn.id = 'book-btn-' + (index + 1);
-                    btn.textContent = name;
-                    btn.onclick = function() { app.selectBook(index + 1); };
-                    booksContainer.appendChild(btn);
-                });
-            },
-            selectBook: function(bookNum) {
-                currentBook = bookNum;
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-btn'));
-                var activeBtn = document.getElementById('book-btn-' + bookNum);
-                if (activeBtn) activeBtn.classList.add('active-btn');
-
-                var chapContainer = document.getElementById('chapters-list');
-                chapContainer.innerHTML = '';
-                var totalChaps = ch[bookNum - 1];
-
-                for (var i = 1; i <= totalChaps; i++) {
-                    (function(chapNum) {
-                        var btn = document.createElement('button');
-                        btn.className = 'chap-btn';
-                        btn.id = 'chap-btn-' + chapNum;
-                        btn.textContent = chapNum;
-                        btn.onclick = function() { app.selectChapter(chapNum); };
-                        chapContainer.appendChild(btn);
-                    })(i);
-                }
-                this.selectChapter(1);
-            },
-            selectChapter: function(chapNum) {
-                currentChapter = chapNum;
-                document.querySelectorAll('.chap-btn').forEach(b => b.classList.remove('active-btn'));
-                var activeChap = document.getElementById('chap-btn-' + chapNum);
-                if (activeChap) activeChap.classList.add('active-btn');
-
-                var versesContainer = document.getElementById('verses');
-                versesContainer.innerHTML = '';
-
-                var chapterData = Bible[currentBook] ? Bible[currentBook][currentChapter] : null;
-
-                if (chapterData && Object.keys(chapterData).length > 0) {
-                    for (var verseNum in chapterData) {
-                        var p = document.createElement('p');
-                        p.className = 'verse';
-                        p.innerHTML = '<span class="verse-num">' + verseNum + '</span>' + chapterData[verseNum];
-                        versesContainer.appendChild(p);
-                    }
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(query)) {
+                    card.style.display = 'flex';
                 } else {
-                    versesContainer.innerHTML = '<p>Chapter content for ' + bookNames[currentBook - 1] + ' ' + chapNum + ' will load here.</p>';
+                    card.style.display = 'none';
                 }
-            },
-            search: function() {
-                var query = document.getElementById('search-input').value.toLowerCase().trim();
-                if (!query) return;
-
-                var versesContainer = document.getElementById('verses');
-                versesContainer.innerHTML = '<h3>Search results for: "' + query + '"</h3>';
-                var found = false;
-
-                for (var b = 1; b <= 66; b++) {
-                    if (!Bible[b]) continue;
-                    for (var c = 1; c <= ch[b - 1]; c++) {
-                        if (!Bible[b][c]) continue;
-                        for (var v in Bible[b][c]) {
-                            var text = Bible[b][c][v];
-                            if (text && text.toLowerCase().includes(query)) {
-                                found = true;
-                                var p = document.createElement('p');
-                                p.className = 'verse';
-                                var highlighted = text.replace(new RegExp(query, 'gi'), function(match) {
-                                    return '<mark>' + match + '</mark>';
-                                });
-                                p.innerHTML = '<strong>' + bookNames[b - 1] + ' ' + c + ':' + v + '</strong> - ' + highlighted;
-                                versesContainer.appendChild(p);
-                            }
-                        }
-                    }
-                }
-
-                if (!found) {
-                    versesContainer.innerHTML += '<p>No verses found matching your query.</p>';
-                }
-            }
-        };
-
-        app.init();
-
-        // --- CHESS GAME LOGIC ---
-        var boardState = [
-            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
-            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
-        ];
-
-        var selectedSquare = null;
-
-        function createBoard() {
-            var boardElement = document.getElementById('chessboard');
-            boardElement.innerHTML = '';
-
-            for (var row = 0; row < 8; row++) {
-                for (var col = 0; col < 8; col++) {
-                    var square = document.createElement('div');
-                    square.className = 'square ' + ((row + col) % 2 === 0 ? 'white' : 'black');
-                    square.dataset.row = row;
-                    square.dataset.col = col;
-                    square.textContent = boardState[row][col];
-                    square.onclick = handleSquareClick;
-                    boardElement.appendChild(square);
-                }
-            }
+            });
         }
-
-        function handleSquareClick(e) {
-            var square = e.currentTarget;
-            var r = parseInt(square.dataset.row);
-            var c = parseInt(square.dataset.col);
-
-            if (selectedSquare) {
-                var prevRow = selectedSquare.row;
-                var prevCol = selectedSquare.col;
-
-                boardState[r][c] = boardState[prevRow][prevCol];
-                boardState[prevRow][prevCol] = '';
-
-                selectedSquare = null;
-                createBoard();
-            } else {
-                if (boardState[r][c] !== '') {
-                    selectedSquare = { row: r, col: c };
-                    square.classList.add('selected');
-                }
-            }
-        }
-
-        createBoard();
     </script>
 </body>
 </html>
-
-```
