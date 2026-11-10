@@ -1,0 +1,17 @@
+[
+  {
+    "id": "chess",
+    "title": "Chess Pro",
+    "desc": "Play chess against a bot or a friend.",
+    "icon": "♟️",
+    "type": "internal"
+  },
+  {
+    "id": "bible",
+    "title": "Bible App",
+    "desc": "A convenient app for reading the Bible.",
+    "icon": "📖",
+    "file": "Bible App.html",
+    "type": "iframe"
+  }
+]
