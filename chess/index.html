@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wooden Chess PRO - ArcadeHub</title>
-    <!-- Google Fonts & FontAwesome Icons -->
+    <title>Chess.com Edition - ArcadeHub</title>
+    <!-- Google Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-dark: #12100e;
-            --wood-light: #eeeed2;
-            --wood-dark: #769656;
+            --bg-dark: #262421;
+            --square-light: #ebecd0;
+            --square-dark: #739552;
             --square-select: #f7ec59;
             --square-check: #ef4444;
-            --square-move-dot: rgba(20, 85, 30, 0.45);
+            --square-move-dot: rgba(20, 85, 30, 0.4);
         }
 
         * {
@@ -26,7 +26,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #181512 radial-gradient(circle at center, #2b2118 0%, #0f0d0b 100%);
+            background-color: var(--bg-dark);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,7 +42,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            max-width: 520px;
+            max-width: 512px;
             margin-bottom: 12px;
         }
 
@@ -51,7 +51,7 @@
             align-items: center;
             gap: 8px;
             background: rgba(255, 255, 255, 0.08);
-            color: #d1d5db;
+            color: #bababa;
             text-decoration: none;
             padding: 8px 16px;
             border-radius: 20px;
@@ -69,8 +69,7 @@
         h1 {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #e2b97c;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #ffffff;
         }
 
         .controls {
@@ -79,18 +78,17 @@
             margin-bottom: 12px;
             align-items: center;
             width: 100%;
-            max-width: 520px;
+            max-width: 512px;
             justify-content: center;
         }
 
         #turn-indicator {
             font-size: 0.9rem;
-            background: #251d16;
+            background: #312e2b;
             padding: 8px 16px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 700;
-            border: 1px solid #423225;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border: 1px solid #403d39;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -99,14 +97,14 @@
 
         #mode-btn {
             padding: 8px 16px;
-            background: linear-gradient(135deg, #a05a2c, #673715);
-            border: 1px solid #844820;
-            border-radius: 10px;
+            background: #81b64c;
+            border: none;
+            border-radius: 8px;
             color: #fff;
             font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 10px rgba(129, 182, 76, 0.3);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -114,8 +112,8 @@
         }
 
         #mode-btn:hover {
+            background: #a3d16b;
             transform: translateY(-2px);
-            background: linear-gradient(135deg, #b86935, #7d431b);
         }
 
         /* Player Bar Component */
@@ -124,51 +122,54 @@
             align-items: center;
             gap: 12px;
             width: 100%;
-            max-width: 520px;
+            max-width: 512px;
             padding: 8px 12px;
-            background: #211a14;
-            border: 1px solid #382c22;
-            border-radius: 8px;
+            background: #312e2b;
+            border-radius: 6px;
             margin: 4px 0;
         }
 
         .avatar {
-            width: 36px;
-            height: 36px;
-            background: #3b2d22;
-            border-radius: 6px;
+            width: 34px;
+            height: 34px;
+            background: #45423e;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: #c5a074;
-            border: 1px solid #544131;
+            font-size: 1.1rem;
+            color: #bababa;
         }
 
         .player-name {
             font-weight: 700;
             font-size: 0.95rem;
-            color: #f3f4f6;
+            color: #ffffff;
         }
 
-        /* Wooden Board Layout */
+        /* Chess Board Container */
         #board-wrapper {
-            padding: 10px;
-            background: #2a1f17 linear-gradient(135deg, #3d2d21 0%, #1c140e 100%);
-            border-radius: 12px;
-            border: 4px solid #4a3628;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0,0,0,0.5);
             position: relative;
+            width: 416px;
+            height: 416px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (min-width: 540px) {
+            #board-wrapper {
+                width: 512px;
+                height: 512px;
+            }
         }
 
         #board {
             display: grid;
             grid-template-columns: repeat(8, 52px);
             grid-template-rows: repeat(8, 52px);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 2px solid #231912;
-            position: relative;
+            width: 100%;
+            height: 100%;
         }
 
         @media (min-width: 540px) {
@@ -189,13 +190,8 @@
             position: relative;
         }
 
-        .wood-light {
-            background-color: var(--wood-light);
-        }
-
-        .wood-dark {
-            background-color: var(--wood-dark);
-        }
+        .square-light { background-color: var(--square-light); }
+        .square-dark { background-color: var(--square-dark); }
 
         .square.selected { background-color: var(--square-select) !important; }
 
@@ -209,11 +205,11 @@
             to { background-color: #991b1b; }
         }
 
-        /* Coordinates (1-8, a-h) */
+        /* Chess.com Coordinates */
         .coord {
             position: absolute;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             pointer-events: none;
             user-select: none;
         }
@@ -225,8 +221,8 @@
             bottom: 2px;
             right: 4px;
         }
-        .wood-light .coord { color: #769656; }
-        .wood-dark .coord { color: #eeeed2; }
+        .square-light .coord { color: var(--square-dark); }
+        .square-dark .coord { color: var(--square-light); }
 
         .dot {
             width: 18px;
@@ -238,31 +234,36 @@
             z-index: 5;
         }
 
-        /* Chess Pieces Style */
-        .piece {
-            font-size: 2.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Separate Animation Layer for Smooth Movement */
+        #pieces-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 2;
-            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 10;
+        }
+
+        .piece-img {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            will-change: transform;
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         @media (min-width: 540px) {
-            .piece {
-                font-size: 2.8rem;
+            .piece-img {
+                width: 64px;
+                height: 64px;
             }
-        }
-
-        .piece-w {
-            color: #ffffff;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
-        }
-
-        .piece-b {
-            color: #1a1a1a;
-            filter: drop-shadow(0 2px 2px rgba(255,255,255,0.4));
         }
     </style>
 </head>
@@ -271,7 +272,7 @@
 
     <div class="header-bar">
         <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
-        <h1>Wooden Chess</h1>
+        <h1>Chess.com Edition</h1>
     </div>
 
     <div class="controls">
@@ -279,18 +280,19 @@
         <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-user-group"></i> Mode: vs Friend</button>
     </div>
 
-    <!-- Opponent Player Bar -->
+    <!-- Opponent Info -->
     <div class="player-bar">
         <div class="avatar"><i class="fa-solid fa-user-ninja"></i></div>
         <div class="player-name" id="opponent-name">Opponent (Black)</div>
     </div>
 
-    <!-- Wooden Chess Board -->
+    <!-- Board Wrapper -->
     <div id="board-wrapper">
         <div id="board"></div>
+        <div id="pieces-layer"></div>
     </div>
 
-    <!-- Local Player Bar -->
+    <!-- Player Info -->
     <div class="player-bar">
         <div class="avatar"><i class="fa-solid fa-user"></i></div>
         <div class="player-name">Player (White)</div>
@@ -307,16 +309,30 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true },
             halfmove = 0,
             history = [],
-            vsAI = false;
+            vsAI = false,
+            isAnimating = false,
+            pieceElementsMap = {};
 
-        const faIcons = {
-            [P.PAWN]: 'fa-solid fa-chess-pawn',
-            [P.ROOK]: 'fa-solid fa-chess-rook',
-            [P.KNIGHT]: 'fa-solid fa-chess-knight',
-            [P.BISHOP]: 'fa-solid fa-chess-bishop',
-            [P.QUEEN]: 'fa-solid fa-chess-queen',
-            [P.KING]: 'fa-solid fa-chess-king'
+        // Official High Quality Chess Vector Images (Wikimedia Cburnett set used by Lichess & Chess.com)
+        const pieceImgUrls = {
+            'w1': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+            'w4': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+            'w2': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+            'w3': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+            'w5': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'w6': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
+
+            'b1': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+            'b4': 'https://upload.wikimedia.org/wikipedia/commons/ff/ff/Chess_rdt45.svg',
+            'b2': 'https://upload.wikimedia.org/wikipedia/commons/ef/ef/Chess_ndt45.svg',
+            'b3': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_bdt45.svg',
+            'b5': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+            'b6': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
         };
+
+        function getSquareSize() {
+            return window.innerWidth >= 540 ? 64 : 52;
+        }
 
         function initBoard() {
             board.fill(0);
@@ -334,9 +350,62 @@
             castling = { wK: true, wQ: true, bK: true, bQ: true };
             halfmove = 0;
             history = [board.join(',')];
+            renderPieces();
+        }
+
+        function renderPieces() {
+            const layer = document.getElementById('pieces-layer');
+            layer.innerHTML = '';
+            pieceElementsMap = {};
+            const sqSize = getSquareSize();
+
+            for (let i = 0; i < 64; i++) {
+                if (board[i]) {
+                    const el = document.createElement('div');
+                    el.className = 'piece-img';
+                    const colorPrefix = (board[i] & P.W) ? 'w' : 'b';
+                    const pieceType = board[i] & 7;
+                    
+                    el.style.backgroundImage = `url("${pieceImgUrls[`${colorPrefix}${pieceType}`]}")`;
+                    
+                    const r = Math.floor(i / 8);
+                    const c = i % 8;
+                    el.style.transform = `translate3d(${c * sqSize}px, ${r * sqSize}px, 0)`;
+                    
+                    layer.appendChild(el);
+                    pieceElementsMap[i] = el;
+                }
+            }
+        }
+
+        function smoothMovePiece(from, to, callback) {
+            isAnimating = true;
+            const sqSize = getSquareSize();
+            const pieceEl = pieceElementsMap[from];
+            const capturedEl = pieceElementsMap[to];
+
+            const targetRow = Math.floor(to / 8);
+            const targetCol = to % 8;
+
+            if (capturedEl) {
+                capturedEl.style.opacity = '0';
+            }
+
+            if (pieceEl) {
+                pieceEl.style.transform = `translate3d(${targetCol * sqSize}px, ${targetRow * sqSize}px, 0)`;
+            }
+
+            setTimeout(() => {
+                makeMove(from, to);
+                renderPieces();
+                drawBoard();
+                isAnimating = false;
+                if (callback) callback();
+            }, 250);
         }
 
         function toggleMode() {
+            if (isAnimating) return;
             vsAI = !vsAI;
             const modeBtn = document.getElementById('mode-btn');
             const oppName = document.getElementById('opponent-name');
@@ -504,8 +573,7 @@
             });
             allMoves.sort((a, b) => b.score - a.score);
             let bestMove = allMoves[0];
-            makeMove(bestMove.from, bestMove.to);
-            drawBoard();
+            smoothMovePiece(bestMove.from, bestMove.to);
         }
 
         function drawBoard() {
@@ -518,9 +586,9 @@
                 const sq = document.createElement('div');
                 let r = Math.floor(i / 8), c = i % 8;
                 const isLight = (r + c) % 2 === 0;
-                sq.classList.add('square', isLight ? 'wood-light' : 'wood-dark');
+                sq.classList.add('square', isLight ? 'square-light' : 'square-dark');
                 
-                // Add Chess.com rank numbers (1-8)
+                // Chess.com Rank Labels (1-8)
                 if (c === 0) {
                     const rankLabel = document.createElement('span');
                     rankLabel.className = 'coord coord-rank';
@@ -528,7 +596,7 @@
                     sq.appendChild(rankLabel);
                 }
 
-                // Add Chess.com file letters (a-h)
+                // Chess.com File Labels (a-h)
                 if (r === 7) {
                     const fileLabel = document.createElement('span');
                     fileLabel.className = 'coord coord-file';
@@ -539,15 +607,6 @@
                 if (selectedSquare === i) sq.classList.add('selected');
                 if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
                 
-                if (board[i]) {
-                    const pieceEl = document.createElement('div');
-                    const colorClass = (board[i] & P.W) ? 'piece-w' : 'piece-b';
-                    const iconClass = faIcons[board[i] & 7];
-                    pieceEl.className = `piece ${colorClass}`;
-                    pieceEl.innerHTML = `<i class="${iconClass}"></i>`;
-                    sq.appendChild(pieceEl);
-                }
-
                 if (possibleMoves.includes(i)) {
                     const dot = document.createElement('div');
                     dot.classList.add('dot');
@@ -555,6 +614,7 @@
                 }
 
                 sq.addEventListener('click', () => {
+                    if (isAnimating) return;
                     if (vsAI && turn === P.B) return;
                     if (!hasMoves(P.W) && !hasMoves(P.B)) return;
 
@@ -569,9 +629,10 @@
                             const from = selectedSquare;
                             selectedSquare = null;
                             possibleMoves = [];
-                            makeMove(from, i);
                             drawBoard();
-                            if (vsAI && turn === P.B) setTimeout(makeAIMove, 300);
+                            smoothMovePiece(from, i, () => {
+                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 250);
+                            });
                         } else if (board[i] && (board[i] & 24) === turn) {
                             selectedSquare = i;
                             possibleMoves = getLegalMoves(i);
@@ -590,17 +651,21 @@
             let hm = hasMoves(turn), dr = isDraw();
             if (!hm) {
                 ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
-                ind.style.backgroundColor = kingCheck ? '#15803d' : '#4b5563';
+                ind.style.backgroundColor = kingCheck ? '#81b64c' : '#45423e';
                 setTimeout(resetGame, 5000);
             } else if (dr) {
                 ind.innerHTML = `<i class="fa-solid fa-handshake"></i> ${dr} Restart...`;
-                ind.style.backgroundColor = '#4b5563';
+                ind.style.backgroundColor = '#45423e';
                 setTimeout(resetGame, 5000);
             } else {
                 ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
-                ind.style.backgroundColor = '#251d16';
+                ind.style.backgroundColor = '#312e2b';
             }
         }
+
+        window.addEventListener('resize', () => {
+            renderPieces();
+        });
 
         initBoard();
         drawBoard();
