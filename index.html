@@ -1,657 +1,370 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppSphere - Игры и Приложения</title>
+    <title>Play Chess Online</title>
+    <!-- Chessboard.js & Chess.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <style>
-        :root {
-            --bg-dark: #100a1c;
-            --bg-card: #1d1536;
-            --bg-card-hover: #291e4a;
-            --primary: #ff6b00;
-            --primary-hover: #ff8533;
-            --purple-accent: #6c5ce7;
-            --text-light: #ffffff;
-            --text-muted: #a29bfe;
-            --border: #2d224e;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: #262421;
+            color: #ffffff;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-        }
-
-        /* Хедер */
-        header {
-            background-color: #160d29;
-            border-bottom: 2px solid var(--border);
-            padding: 12px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.4);
-        }
-
-        .brand-name {
-            font-size: 24px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #ff6b00, #ff9f43);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        nav {
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-link {
-            background: #241943;
-            border: 1px solid var(--border);
-            color: var(--text-light);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-
-        /* Область отображения приложений */
-        .app-view {
-            display: none;
-            width: 100%;
             padding: 20px;
-            justify-content: center;
         }
 
-        .app-view.active-view {
-            display: flex;
-        }
-
-        /* --- ШАХМАТЫ --- */
-        .chess-container {
+        .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 24px;
-            margin: 0 auto;
+            gap: 20px;
             max-width: 1000px;
             width: 100%;
             justify-content: center;
             align-items: flex-start;
         }
 
-        .board-wrapper {
+        /* Board Container */
+        .board-container {
             flex: 1;
-            min-width: 300px;
-            max-width: 540px;
+            max-width: 560px;
+            min-width: 320px;
             display: flex;
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-tag {
+            display: flex;
             align-items: center;
+            gap: 10px;
+            background: #312e2b;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
         }
 
-        .player-info {
-            width: 100%;
-            padding: 8px 4px;
+        .player-avatar {
+            width: 35px;
+            height: 35px;
+            background: #45423e;
+            border-radius: 4px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .captured-pieces {
-            font-size: 20px;
-            min-height: 24px;
-            display: flex;
-            gap: 2px;
-        }
-
-        .board {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            border: 2px solid var(--border);
-            user-select: none;
-        }
-
-        .square {
-            display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: clamp(28px, 5.5vw, 46px);
-            cursor: pointer;
-            line-height: 1;
+            font-size: 20px;
         }
 
-        .square.light { background-color: #ebecd0; }
-        .square.dark { background-color: #739552; }
-        .square.selected { background-color: #bbcb2b !important; }
-
-        .piece-white {
-            color: #ffffff !important;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
+        #myBoard {
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        .piece-black {
-            color: #111111 !important;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+        /* Chess.com Green Board Colors */
+        .white-1e1d7 {
+            background-color: #eeeed2 !important;
+            color: #769656 !important;
+        }
+        .black-3c85d {
+            background-color: #769656 !important;
+            color: #eeeed2 !important;
         }
 
-        .chess-panel {
-            width: 300px;
-            background-color: var(--bg-card);
-            border-radius: 16px;
+        /* Control Panel */
+        .control-panel {
+            width: 320px;
+            background-color: #312e2b;
             padding: 20px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            border: 1px solid var(--border);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        .mode-select {
+        .panel-title {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .btn {
+            background-color: #45423e;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background-color: #57534e;
+        }
+
+        .btn-primary {
+            background-color: #81b64c;
+            color: #fff;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            background-color: #a3d168;
+        }
+
+        select {
             width: 100%;
             padding: 10px;
-            background: #160d29;
+            background: #262421;
             color: #fff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            border: 1px solid #45423e;
+            border-radius: 5px;
             font-size: 14px;
             outline: none;
         }
 
         .status-box {
-            font-size: 15px;
-            font-weight: 700;
-            color: #fff;
+            background: #262421;
             padding: 12px;
-            background-color: #160d29;
-            border-radius: 8px;
+            border-radius: 5px;
+            font-size: 14px;
             text-align: center;
-            border-left: 4px solid var(--primary);
+            color: #bababa;
         }
 
-        .move-history {
-            height: 200px;
-            background-color: #160d29;
-            border-radius: 8px;
-            padding: 10px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            border: 1px solid var(--border);
+        /* Square Highlight Styles */
+        .selected-square {
+            background-color: #bbcb2b !important;
         }
-
-        .history-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 2px 6px;
+        .possible-move-square {
+            box-shadow: inset 0 0 0 4px rgba(20, 85, 30, 0.5);
         }
-
-        .history-row:nth-child(even) { background-color: #1d1238; }
-
-        .chess-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-chess {
-            flex: 1;
-            padding: 10px;
-            background-color: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-chess:hover { background-color: var(--primary-hover); }
-        .btn-chess-sec { background-color: #2b1f4c; }
-        .btn-chess-sec:hover { background-color: #3b2c66; }
-
-        /* Главная сетка */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 20px auto;
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--purple-accent);
-        }
-
-        .card-preview {
-            height: 130px;
-            background: #2b1f4c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 45px;
-        }
-
-        .card-body { padding: 15px; }
-        .card-title { font-weight: 700; margin-bottom: 5px; }
-        .card-desc { font-size: 12px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand-container" onclick="openHome()">
-            <div class="logo-icon">
-                <svg viewBox="0 0 100 100" width="30" height="30">
-                    <ellipse cx="25" cy="40" rx="12" ry="16" fill="url(#orangeGrad)" />
-                    <ellipse cx="50" cy="28" rx="13" ry="18" fill="url(#orangeGrad)" />
-                    <ellipse cx="75" cy="40" rx="12" ry="16" fill="url(#orangeGrad)" />
-                    <path d="M 20,62 C 25,48 40,42 50,42 C 60,42 75,48 80,62 C 85,76 75,85 50,85 C 25,85 15,76 20,62 Z" fill="url(#orangeGrad)" />
-                    <path d="M 44,85 L 44,72 C 44,68 56,68 56,72 L 56,85 Z" fill="#ffffff" />
-                    <defs>
-                        <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#ff9f43" />
-                            <stop offset="100%" stop-color="#ff6b00" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </div>
-            <div class="brand-name">AppSphere</div>
+<div class="container">
+    <div class="board-container">
+        <!-- Opponent -->
+        <div class="player-tag">
+            <div class="player-avatar">♟</div>
+            <span id="opponentName">Opponent (Bot)</span>
         </div>
 
-        <nav id="nav-bar">
-            <button class="nav-link active" onclick="openHome()">Главная</button>
-        </nav>
-    </header>
+        <!-- Chess Board -->
+        <div id="myBoard"></div>
 
-    <!-- Главная страница с сеткой игр -->
-    <div id="view-home" style="display: block;">
-        <div class="grid" id="games-grid">
-            <!-- Карточки загружаются автоматически -->
+        <!-- Player -->
+        <div class="player-tag">
+            <div class="player-avatar">♙</div>
+            <span id="playerName">Player (White)</span>
         </div>
     </div>
 
-    <!-- Контейнер для динамически загружаемых iframe-приложений -->
-    <div id="view-dynamic-iframe" class="app-view">
-        <iframe id="app-iframe" src="" style="width: 100%; height: 80vh; border: none; border-radius: 12px;"></iframe>
-    </div>
+    <!-- Right Control Panel -->
+    <div class="control-panel">
+        <div class="panel-title">Play Chess</div>
 
-    <!-- Встроенные шахматы -->
-    <div id="view-chess" class="app-view">
-        <div class="chess-container">
-            <div class="board-wrapper">
-                <div class="player-info">
-                    <span id="blackPlayerName">Соперник (Черные)</span>
-                    <div class="captured-pieces" id="blackCaptured"></div>
-                </div>
-                
-                <div class="board" id="board"></div>
+        <button class="btn" onclick="setMode('bot')">
+            <span>🤖</span> Play Bots
+        </button>
 
-                <div class="player-info">
-                    <span>Вы (Белые)</span>
-                    <div class="captured-pieces" id="whiteCaptured"></div>
-                </div>
-            </div>
+        <button class="btn" onclick="setMode('friend')">
+            <span>🤝</span> Play a Friend (Pass & Play)
+        </button>
 
-            <div class="chess-panel">
-                <h3>Настройки Игры</h3>
-                
-                <select id="gameMode" class="mode-select" onchange="changeMode()">
-                    <option value="bot-easy">Против Бота (Легкий)</option>
-                    <option value="bot-hard">Против Бота (Средний)</option>
-                    <option value="pvp">Против Друга (2 игрока)</option>
-                </select>
-
-                <div class="status-box" id="status">Ход: Белые</div>
-                <div class="move-history" id="history"></div>
-
-                <div class="chess-controls">
-                    <button class="btn-chess btn-chess-sec" onclick="undoMove()">Отмена</button>
-                    <button class="btn-chess btn-chess-sec" onclick="flipBoard()">Повернуть</button>
-                    <button class="btn-chess" onclick="resetGame()">Заново</button>
-                </div>
-            </div>
+        <div id="botSettings">
+            <label style="font-size: 12px; color: #aaa; margin-bottom: 5px; display: block;">Bot Difficulty:</label>
+            <select id="botDifficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
         </div>
+
+        <button class="btn btn-primary" onclick="resetGame()">New Game</button>
+
+        <div class="status-box" id="gameStatus">White to move</div>
     </div>
+</div>
 
-    <script>
-        let allGames = [];
+<!-- Dependencies -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 
-        // Автоматическая загрузка списка игр из games.json
-        async function loadGamesList() {
-            try {
-                const response = await fetch('games.json');
-                allGames = await response.json();
-                renderCatalog();
-            } catch (error) {
-                console.error("Ошибка при загрузке games.json:", error);
+<script>
+    let board = null;
+    let game = new Chess();
+    let gameMode = 'bot';
+    let selectedSquare = null;
+
+    const $status = $('#gameStatus');
+
+    function removeHighlights () {
+        $('#myBoard .square-55d63').removeClass('selected-square possible-move-square');
+    }
+
+    function addHighlights (square) {
+        removeHighlights();
+        $('#myBoard .square-' + square).addClass('selected-square');
+
+        const moves = game.moves({ square: square, verbose: true });
+        moves.forEach(m => {
+            $('#myBoard .square-' + m.to).addClass('possible-move-square');
+        });
+    }
+
+    function onSquareClick (square) {
+        if (game.game_over()) return;
+
+        // Prevent moving black pieces when playing vs Bot
+        if (gameMode === 'bot' && game.turn() === 'b') return;
+
+        const piece = game.get(square);
+
+        // Click 1: Select piece to move
+        if (selectedSquare === null) {
+            if (piece && piece.color === game.turn()) {
+                selectedSquare = square;
+                addHighlights(square);
             }
+            return;
         }
 
-        function renderCatalog() {
-            const grid = document.getElementById('games-grid');
-            const navBar = document.getElementById('nav-bar');
-            
-            grid.innerHTML = '';
-            navBar.innerHTML = '<button class="nav-link active" onclick="openHome()">Главная</button>';
+        // Click 2: Execute move
+        const move = game.move({
+            from: selectedSquare,
+            to: square,
+            promotion: 'q'
+        });
 
-            allGames.forEach(game => {
-                // Создание карточки на главной
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => openGame(game.id);
-                card.innerHTML = `
-                    <div class="card-preview">${game.icon || '🎮'}</div>
-                    <div class="card-body">
-                        <div class="card-title">${game.title}</div>
-                        <div class="card-desc">${game.desc || ''}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-
-                // Создание кнопки в меню навигации
-                const navBtn = document.createElement('button');
-                navBtn.className = 'nav-link';
-                navBtn.dataset.gameId = game.id;
-                navBtn.textContent = game.title;
-                navBtn.onclick = () => openGame(game.id);
-                navBar.appendChild(navBtn);
-            });
+        // If clicked on another piece of the current turn's color, switch selection
+        if (move === null && piece && piece.color === game.turn()) {
+            selectedSquare = square;
+            addHighlights(square);
+            return;
         }
 
-        function openHome() {
-            document.getElementById('view-home').style.display = 'block';
-            document.getElementById('view-chess').classList.remove('active-view');
-            document.getElementById('view-dynamic-iframe').classList.remove('active-view');
-            
-            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.nav-link')[0].classList.add('active');
-        }
-
-        function openGame(gameId) {
-            const game = allGames.find(g => g.id === gameId);
-            if (!game) return;
-
-            document.getElementById('view-home').style.display = 'none';
-            document.getElementById('view-chess').classList.remove('active-view');
-            document.getElementById('view-dynamic-iframe').classList.remove('active-view');
-
-            document.querySelectorAll('.nav-link').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.gameId === gameId);
-            });
-
-            if (game.type === 'internal' && game.id === 'chess') {
-                document.getElementById('view-chess').classList.add('active-view');
-            } else if (game.file) {
-                const iframe = document.getElementById('app-iframe');
-                iframe.src = game.file;
-                document.getElementById('view-dynamic-iframe').classList.add('active-view');
-            }
-        }
-
-        /* --- ШАХМАТНЫЙ ДВИЖОК --- */
-        const pieceSymbols = {
-            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
-            'R': '♜', 'N': '♞', 'B': '♝', 'Q': '♛', 'K': '♚', 'P': '♟'
-        };
-
-        const initialBoard = [
-            ['r','n','b','q','k','b','n','r'],
-            ['p','p','p','p','p','p','p','p'],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['P','P','P','P','P','P','P','P'],
-            ['R','N','B','Q','K','B','N','R']
-        ];
-
-        let boardState = [];
-        let turn = 'W';
-        let selected = null;
-        let moveHistory = [];
-        let capturedWhite = [];
-        let capturedBlack = [];
-        let isFlipped = false;
-        let gameMode = 'bot-easy';
-
-        function initGame() {
-            boardState = JSON.parse(JSON.stringify(initialBoard));
-            turn = 'W';
-            selected = null;
-            moveHistory = [];
-            capturedWhite = [];
-            capturedBlack = [];
-            renderBoard();
+        // Successful move
+        if (move !== null) {
+            selectedSquare = null;
+            removeHighlights();
+            board.position(game.fen());
             updateStatus();
-        }
 
-        function isWhite(piece) { return piece && piece === piece.toUpperCase(); }
-        function isBlack(piece) { return piece && piece === piece.toLowerCase(); }
-
-        function renderBoard() {
-            const boardEl = document.getElementById('board');
-            boardEl.innerHTML = '';
-
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const row = isFlipped ? 7 - r : r;
-                    const col = isFlipped ? 7 - c : c;
-                    const piece = boardState[row][col];
-
-                    const square = document.createElement('div');
-                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
-                    
-                    if (piece) {
-                        const span = document.createElement('span');
-                        span.textContent = pieceSymbols[piece];
-                        span.className = isWhite(piece) ? 'piece-white' : 'piece-black';
-                        square.appendChild(span);
-                    }
-
-                    if (selected && selected.r === row && selected.c === col) {
-                        square.classList.add('selected');
-                    }
-
-                    square.onclick = () => handleSquareClick(row, col);
-                    boardEl.appendChild(square);
-                }
+            if (gameMode === 'bot' && !game.game_over()) {
+                window.setTimeout(makeBotMove, 250);
             }
-
-            renderCaptured('whiteCaptured', capturedWhite);
-            renderCaptured('blackCaptured', capturedBlack);
-            renderHistory();
+        } else {
+            selectedSquare = null;
+            removeHighlights();
         }
+    }
 
-        function renderCaptured(elementId, pieces) {
-            const el = document.getElementById(elementId);
-            el.innerHTML = '';
-            pieces.forEach(p => {
-                const span = document.createElement('span');
-                span.textContent = pieceSymbols[p];
-                span.className = isWhite(p) ? 'piece-white' : 'piece-black';
-                el.appendChild(span);
-            });
-        }
+    function makeBotMove () {
+        const possibleMoves = game.moves();
+        if (possibleMoves.length === 0 || game.game_over()) return;
 
-        function handleSquareClick(r, c) {
-            if (gameMode.startsWith('bot') && turn === 'B') return;
-            const piece = boardState[r][c];
+        const difficulty = $('#botDifficulty').val();
+        let move;
 
-            if (selected) {
-                if (selected.r === r && selected.c === c) {
-                    selected = null;
-                } else if ((turn === 'W' && isWhite(piece)) || (turn === 'B' && isBlack(piece))) {
-                    selected = { r, c };
-                } else {
-                    executeMove(selected.r, selected.c, r, c);
-                    selected = null;
-                }
+        if (difficulty === 'easy') {
+            const randomIdx = Math.floor(Math.random() * possibleMoves.length);
+            move = possibleMoves[randomIdx];
+        } else {
+            const verboseMoves = game.moves({ verbose: true });
+            const captures = verboseMoves.filter(m => m.captured);
+
+            if (captures.length > 0 && (difficulty === 'hard' || Math.random() > 0.4)) {
+                move = captures[Math.floor(Math.random() * captures.length)];
             } else {
-                if ((turn === 'W' && isWhite(piece)) || (turn === 'B' && isBlack(piece))) {
-                    selected = { r, c };
-                }
-            }
-            renderBoard();
-        }
-
-        function executeMove(fromR, fromC, toR, toC) {
-            const movingPiece = boardState[fromR][fromC];
-            const targetPiece = boardState[toR][toC];
-
-            if (targetPiece) {
-                if (isWhite(targetPiece)) capturedBlack.push(targetPiece);
-                else capturedWhite.push(targetPiece);
-            }
-
-            boardState[toR][toC] = movingPiece;
-            boardState[fromR][fromC] = '';
-
-            const colNames = ['a','b','c','d','e','f','g','h'];
-            const moveNotation = `${pieceSymbols[movingPiece]}${colNames[fromC]}${8-fromR}→${colNames[toC]}${8-toR}`;
-            
-            moveHistory.push({ notation: moveNotation, board: JSON.parse(JSON.stringify(boardState)) });
-            turn = turn === 'W' ? 'B' : 'W';
-            updateStatus();
-
-            if (gameMode.startsWith('bot') && turn === 'B') {
-                setTimeout(makeBotMove, 400);
+                move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
             }
         }
 
-        function makeBotMove() {
-            let possibleMoves = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (isBlack(boardState[r][c])) {
-                        for (let tr = 0; tr < 8; tr++) {
-                            for (let tc = 0; tc < 8; tc++) {
-                                if (!isBlack(boardState[tr][tc])) {
-                                    possibleMoves.push({ fromR: r, fromC: c, toR: tr, toC: tc, target: boardState[tr][tc] });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        game.move(move);
+        board.position(game.fen());
+        updateStatus();
+    }
 
-            if (possibleMoves.length > 0) {
-                let move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-                if (gameMode === 'bot-hard') {
-                    const captures = possibleMoves.filter(m => m.target !== '');
-                    if (captures.length > 0) move = captures[Math.floor(Math.random() * captures.length)];
-                }
-                executeMove(move.fromR, move.fromC, move.toR, move.toC);
-                renderBoard();
+    function updateStatus () {
+        let status = '';
+        let moveColor = (game.turn() === 'w') ? 'White' : 'Black';
+
+        if (game.in_checkmate()) {
+            status = 'Game over, CHECKMATE! ' + (game.turn() === 'w' ? 'Black' : 'White') + ' wins.';
+        } else if (game.in_draw()) {
+            status = 'Game over, DRAW!';
+        } else {
+            status = moveColor + ' to move';
+            if (game.in_check()) {
+                status += ' (CHECK!)';
             }
         }
 
-        function updateStatus() {
-            document.getElementById('status').textContent = `Ход: ${turn === 'W' ? 'Белые' : 'Черные'}`;
+        $status.html(status);
+    }
+
+    function setMode(mode) {
+        gameMode = mode;
+        if (mode === 'friend') {
+            $('#opponentName').text('Friend (Black)');
+            $('#botSettings').hide();
+        } else {
+            $('#opponentName').text('Opponent (Bot)');
+            $('#botSettings').show();
         }
+        resetGame();
+    }
 
-        function renderHistory() {
-            const historyEl = document.getElementById('history');
-            historyEl.innerHTML = '';
-            for (let i = 0; i < moveHistory.length; i += 2) {
-                const row = document.createElement('div');
-                row.className = 'history-row';
-                const moveNum = Math.floor(i / 2) + 1;
-                const wMove = moveHistory[i] ? moveHistory[i].notation : '';
-                const bMove = moveHistory[i + 1] ? moveHistory[i + 1].notation : '';
-                row.textContent = `${moveNum}. ${wMove}  ${bMove}`;
-                historyEl.appendChild(row);
-            }
-            historyEl.scrollTop = historyEl.scrollHeight;
-        }
+    function resetGame() {
+        game.reset();
+        board.start();
+        selectedSquare = null;
+        removeHighlights();
+        updateStatus();
+    }
 
-        function changeMode() {
-            gameMode = document.getElementById('gameMode').value;
-            document.getElementById('blackPlayerName').textContent = gameMode === 'pvp' ? 'Игрок 2 (Черные)' : 'Бот (Черные)';
-            initGame();
-        }
+    // Board Configuration with Dragging Disabled (Click-to-Move only)
+    const config = {
+        draggable: false,
+        position: 'start',
+        moveSpeed: 'slow',
+        pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+    };
+    board = Chessboard('myBoard', config);
 
-        function undoMove() {
-            if (moveHistory.length === 0) return;
-            let steps = gameMode.startsWith('bot') ? 2 : 1;
-            while (steps > 0 && moveHistory.length > 0) {
-                moveHistory.pop();
-                steps--;
-                turn = turn === 'W' ? 'B' : 'W';
-            }
-            boardState = moveHistory.length > 0 
-                ? JSON.parse(JSON.stringify(moveHistory[moveHistory.length - 1].board))
-                : JSON.parse(JSON.stringify(initialBoard));
-            selected = null;
-            updateStatus();
-            renderBoard();
-        }
+    // Bind click handlers to board squares
+    $('#myBoard').on('click', '.square-55d63', function () {
+        const square = $(this).attr('data-square');
+        onSquareClick(square);
+    });
 
-        function flipBoard() { isFlipped = !isFlipped; renderBoard(); }
-        function resetGame() { initGame(); }
+    $(window).resize(board.resize);
+    updateStatus();
+</script>
 
-        // Запуск
-        loadGamesList();
-        initGame();
-    </script>
 </body>
 </html>
