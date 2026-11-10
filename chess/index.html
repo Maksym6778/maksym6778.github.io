@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess PRO - ArcadeHub</title>
+    <title>Wooden Chess PRO - ArcadeHub</title>
     <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- GSAP for Smooth Professional Piece Animations -->
+    <!-- GSAP for Smooth Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <style>
         :root {
-            --bg-dark: #0a0d14;
-            --square-light: #e2e8f0;
-            --square-dark: #475569;
-            --square-select: #f59e0b;
+            --bg-dark: #12100e;
+            --board-frame: #2c1d11;
+            --square-light: #eeeed2;
+            --square-dark: #769656;
+            --wood-light: #e0c097;
+            --wood-dark: #8b5a2b;
+            --square-select: #f7ec59;
             --square-check: #ef4444;
-            --square-move-dot: rgba(16, 185, 129, 0.7);
-            --piece-white: #ffffff;
-            --piece-black: #0f172a;
+            --square-move-dot: rgba(20, 85, 30, 0.5);
+            --text-gold: #f59e0b;
         }
 
         * {
@@ -30,14 +32,14 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            background: #181512 radial-gradient(circle at center, #2b2118 0%, #0f0d0b 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             color: #ffffff;
-            padding: 20px;
+            padding: 15px;
             overflow-x: hidden;
         }
 
@@ -47,7 +49,7 @@
             justify-content: space-between;
             width: 100%;
             max-width: 520px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .back-btn {
@@ -55,33 +57,32 @@
             align-items: center;
             gap: 8px;
             background: rgba(255, 255, 255, 0.08);
-            color: #94a3b8;
+            color: #d1d5db;
             text-decoration: none;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             transition: all 0.2s ease;
         }
 
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.18);
             color: #fff;
         }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            background: linear-gradient(to right, #38bdf8, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #e2b97c;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .controls {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 12px;
             align-items: center;
             width: 100%;
             max-width: 520px;
@@ -89,29 +90,29 @@
         }
 
         #turn-indicator {
-            font-size: 0.95rem;
-            background: rgba(15, 23, 42, 0.85);
-            padding: 10px 18px;
-            border-radius: 12px;
+            font-size: 0.9rem;
+            background: #251d16;
+            padding: 8px 16px;
+            border-radius: 10px;
             font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #423225;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
+            color: #e5e7eb;
         }
 
         #mode-btn {
-            padding: 10px 18px;
-            background: linear-gradient(135deg, #8b5cf6, #6366f1);
-            border: none;
-            border-radius: 12px;
-            color: white;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #a05a2c, #673715);
+            border: 1px solid #844820;
+            border-radius: 10px;
+            color: #fff;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -120,16 +121,49 @@
 
         #mode-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(135deg, #b86935, #7d431b);
         }
 
-        /* Board Container */
+        /* Player Bar Component */
+        .player-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 520px;
+            padding: 8px 12px;
+            background: #211a14;
+            border: 1px solid #382c22;
+            border-radius: 8px;
+            margin: 4px 0;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #3b2d22;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #c5a074;
+            border: 1px solid #544131;
+        }
+
+        .player-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f3f4f6;
+        }
+
+        /* Wooden Board Layout */
         #board-wrapper {
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            background: #2a1f17 linear-gradient(135deg, #3d2d21 0%, #1c140e 100%);
+            border-radius: 12px;
+            border: 4px solid #4a3628;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0,0,0,0.5);
             position: relative;
         }
 
@@ -137,9 +171,9 @@
             display: grid;
             grid-template-columns: repeat(8, 52px);
             grid-template-rows: repeat(8, 52px);
-            border-radius: 8px;
+            border-radius: 4px;
             overflow: hidden;
-            border: 2px solid #334155;
+            border: 2px solid #231912;
             position: relative;
         }
 
@@ -159,11 +193,20 @@
             cursor: pointer;
             user-select: none;
             position: relative;
-            transition: background-color 0.15s ease;
         }
 
-        .light { background-color: var(--square-light); }
-        .dark { background-color: var(--square-dark); }
+        /* Wooden Texture Board Colors */
+        .wood-light {
+            background-color: var(--wood-light);
+            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
+            background-size: 8px 8px;
+        }
+
+        .wood-dark {
+            background-color: var(--wood-dark);
+            background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 0);
+            background-size: 8px 8px;
+        }
 
         .square.selected { background-color: var(--square-select) !important; }
 
@@ -177,6 +220,25 @@
             to { background-color: #991b1b; }
         }
 
+        /* Coordinates Notation (1-8, a-h) */
+        .coord {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 800;
+            pointer-events: none;
+            user-select: none;
+        }
+        .coord-rank {
+            top: 3px;
+            left: 4px;
+        }
+        .coord-file {
+            bottom: 2px;
+            right: 4px;
+        }
+        .wood-light .coord { color: #8b5a2b; }
+        .wood-dark .coord { color: #e0c097; }
+
         .dot {
             width: 18px;
             height: 18px;
@@ -184,15 +246,14 @@
             border-radius: 50%;
             position: absolute;
             pointer-events: none;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
             z-index: 5;
         }
 
-        /* Piece layer absolutely overlaid on the board */
+        /* Absolute Piece Layer */
         #pieces-layer {
             position: absolute;
-            top: 14px;
-            left: 14px;
+            top: 12px;
+            left: 12px;
             width: 416px;
             height: 416px;
             pointer-events: none;
@@ -215,7 +276,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             user-select: none;
             pointer-events: none;
             will-change: transform;
@@ -225,18 +286,18 @@
             .piece {
                 width: 64px;
                 height: 64px;
-                font-size: 2.7rem;
+                font-size: 2.8rem;
             }
         }
 
         .piece-w {
-            color: var(--piece-white);
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));
+            color: #ffffff;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
         }
 
         .piece-b {
-            color: var(--piece-black);
-            filter: drop-shadow(0 2px 3px rgba(255,255,255,0.3));
+            color: #1a1a1a;
+            filter: drop-shadow(0 2px 2px rgba(255,255,255,0.4));
         }
     </style>
 </head>
@@ -245,7 +306,7 @@
 
     <div class="header-bar">
         <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
-        <h1>Chess PRO</h1>
+        <h1>Wooden Chess</h1>
     </div>
 
     <div class="controls">
@@ -253,9 +314,22 @@
         <button id="mode-btn" onclick="toggleMode()"><i class="fa-solid fa-user-group"></i> Mode: vs Friend</button>
     </div>
 
+    <!-- Opponent Player Info -->
+    <div class="player-bar">
+        <div class="avatar"><i class="fa-solid fa-user-ninja"></i></div>
+        <div class="player-name" id="opponent-name">Opponent (Black)</div>
+    </div>
+
+    <!-- Wooden Chess Board -->
     <div id="board-wrapper">
         <div id="board"></div>
         <div id="pieces-layer"></div>
+    </div>
+
+    <!-- Local Player Info -->
+    <div class="player-bar">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="player-name">Player (White)</div>
     </div>
 
     <script>
@@ -335,9 +409,14 @@
             if (isAnimating) return;
             vsAI = !vsAI;
             const modeBtn = document.getElementById('mode-btn');
-            modeBtn.innerHTML = vsAI 
-                ? '<i class="fa-solid fa-robot"></i> Mode: vs Bot' 
-                : '<i class="fa-solid fa-user-group"></i> Mode: vs Friend';
+            const oppName = document.getElementById('opponent-name');
+            if (vsAI) {
+                modeBtn.innerHTML = '<i class="fa-solid fa-robot"></i> Mode: vs Bot';
+                oppName.innerHTML = 'Bot AI (Black)';
+            } else {
+                modeBtn.innerHTML = '<i class="fa-solid fa-user-group"></i> Mode: vs Friend';
+                oppName.innerHTML = 'Friend (Black)';
+            }
             resetGame();
         }
 
@@ -426,17 +505,15 @@
             const targetRow = Math.floor(to / 8);
             const targetCol = to % 8;
 
-            // Fade out captured piece smoothly
             if (capturedEl) {
-                gsap.to(capturedEl, { scale: 0, opacity: 0, duration: 0.2, ease: "power1.in" });
+                gsap.to(capturedEl, { scale: 0, opacity: 0, duration: 0.18, ease: "power1.in" });
             }
 
-            // Smooth gliding animation for moving piece
             if (pieceEl) {
                 gsap.to(pieceEl, {
                     x: targetCol * sqSize,
                     y: targetRow * sqSize,
-                    duration: 0.28,
+                    duration: 0.25,
                     ease: "power2.out",
                     onComplete: () => {
                         makeMove(from, to);
@@ -483,134 +560,4 @@
             enPassant = (type === P.PAWN && Math.abs(to - from) === 16) ? to + (col === P.W ? 8 : -8) : null;
             if (type === P.PAWN && (Math.floor(to / 8) === 0 || Math.floor(to / 8) === 7)) board[to] = P.QUEEN | col;
             halfmove = (type === P.PAWN || isCap) ? 0 : halfmove + 1;
-            turn = turn === P.W ? P.B : P.W;
-            history.push(board.join(','));
-        }
-
-        function getLegalMoves(from) {
-            let raw = generateMoves(from), legal = [], col = board[from] & 24;
-            for (let to of raw) {
-                let saved = [...board], savedC = { ...castling }, savedEP = enPassant;
-                if ((board[from] & 7) === P.PAWN && to === enPassant) board[to + (col === P.W ? 8 : -8)] = 0;
-                board[to] = board[from]; board[from] = 0;
-                let kingSq = getKing(col);
-                if (kingSq !== -1 && !isAttacked(kingSq, col === P.W ? P.B : P.W)) legal.push(to);
-                board = saved; castling = savedC; enPassant = savedEP;
-            }
-            return legal;
-        }
-
-        function hasMoves(col) {
-            for (let i = 0; i < 64; i++) {
-                if ((board[i] & 24) === col && getLegalMoves(i).length > 0) return true;
-            }
-            return false;
-        }
-
-        function isDraw() {
-            if (halfmove >= 100) return "Draw: 50 moves!";
-            if (history.filter(x => x === board.join(',')).length >= 3) return "Draw: Repetition!";
-            return null;
-        }
-
-        function makeAIMove() {
-            let piecesValues = { [P.PAWN]: 10, [P.KNIGHT]: 30, [P.BISHOP]: 30, [P.ROOK]: 50, [P.QUEEN]: 90, [P.KING]: 900 };
-            let allMoves = [];
-            for (let i = 0; i < 64; i++) {
-                if (board[i] && (board[i] & P.B)) {
-                    let moves = getLegalMoves(i);
-                    for (let m of moves) allMoves.push({ from: i, to: m });
-                }
-            }
-            if (allMoves.length === 0) return;
-            allMoves.forEach(mv => {
-                let score = 0;
-                let targetPiece = board[mv.to];
-                if (targetPiece) score += piecesValues[targetPiece & 7] * 2;
-                let currentPieceType = board[mv.from] & 7;
-                if (currentPieceType === P.PAWN) score += (Math.floor(mv.to / 8));
-                mv.score = score + (Math.random() * 3);
-            });
-            allMoves.sort((a, b) => b.score - a.score);
-            let bestMove = allMoves[0];
-            smoothMovePiece(bestMove.from, bestMove.to);
-        }
-
-        function drawBoard() {
-            const el = document.getElementById('board');
-            el.innerHTML = '';
-            let kingCheck = isAttacked(getKing(turn), turn === P.W ? P.B : P.W);
-            
-            for (let i = 0; i < 64; i++) {
-                const sq = document.createElement('div');
-                let r = Math.floor(i / 8), c = i % 8;
-                sq.classList.add('square', (r + c) % 2 === 0 ? 'light' : 'dark');
-                
-                if (selectedSquare === i) sq.classList.add('selected');
-                if (kingCheck && (board[i] & 7) === P.KING && (board[i] & 24) === turn) sq.classList.add('in-check');
-                
-                if (possibleMoves.includes(i)) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('dot');
-                    sq.appendChild(dot);
-                }
-
-                sq.addEventListener('click', () => {
-                    if (isAnimating) return;
-                    if (vsAI && turn === P.B) return;
-                    if (!hasMoves(P.W) && !hasMoves(P.B)) return;
-
-                    if (selectedSquare === null) {
-                        if (board[i] && (board[i] & 24) === turn) {
-                            selectedSquare = i;
-                            possibleMoves = getLegalMoves(i);
-                            drawBoard();
-                        }
-                    } else {
-                        if (possibleMoves.includes(i)) {
-                            const from = selectedSquare;
-                            selectedSquare = null;
-                            possibleMoves = [];
-                            drawBoard();
-                            smoothMovePiece(from, i, () => {
-                                if (vsAI && turn === P.B) setTimeout(makeAIMove, 250);
-                            });
-                        } else if (board[i] && (board[i] & 24) === turn) {
-                            selectedSquare = i;
-                            possibleMoves = getLegalMoves(i);
-                            drawBoard();
-                        } else {
-                            selectedSquare = null;
-                            possibleMoves = [];
-                            drawBoard();
-                        }
-                    }
-                });
-                el.appendChild(sq);
-            }
-
-            const ind = document.getElementById('turn-indicator');
-            let hm = hasMoves(turn), dr = isDraw();
-            if (!hm) {
-                ind.innerHTML = kingCheck ? `<i class="fa-solid fa-trophy"></i> Checkmate! Restart in 5s...` : '<i class="fa-solid fa-handshake"></i> Stalemate! Restart...';
-                ind.style.backgroundColor = kingCheck ? '#10b981' : '#64748b';
-                setTimeout(resetGame, 5000);
-            } else if (dr) {
-                ind.innerHTML = `<i class="fa-solid fa-handshake"></i> ${dr} Restart...`;
-                ind.style.backgroundColor = '#64748b';
-                setTimeout(resetGame, 5000);
-            } else {
-                ind.innerHTML = `<i class="fa-solid fa-chess-king"></i> Turn: ${turn===P.W?'White':'Black'}${kingCheck?' (CHECK!)':''}`;
-                ind.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
-            }
-        }
-
-        window.addEventListener('resize', () => {
-            buildPiecesDOM();
-        });
-
-        initBoard();
-        drawBoard();
-    </script>
-</body>
-</html>
+            turn = turn === P.W ? P.B : P
